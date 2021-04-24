@@ -30,3 +30,5 @@ model.add(activations.Tanh())
 
 model.compile(optimizer='SGD', loss='MSE')
 print(model)
+
+model.train(train_data, train_labels)

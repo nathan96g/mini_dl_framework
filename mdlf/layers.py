@@ -9,6 +9,7 @@ class Linear(Layer):
     def __init__(self, number_nodes, input_dim=-1):
         self.output_dim = number_nodes
         self.input_dim = input_dim
+        self.number_params = -1
         self.weights = None
         self.bias = None
         self.weights_grad = None
@@ -39,6 +40,7 @@ class Linear(Layer):
         # Initialize weights and bias
         self.weights = torch.empty(self.input_dim, self.output_dim).uniform_(0, 1)
         self.bias = torch.empty(self.output_dim).fill_(0)
+        self.number_params = self.output_dim * self.input_dim + self.output_dim
     
     def __str__(self):
         return super().__str__() + ": Linear" 

@@ -5,6 +5,7 @@ class Activation:
     def __init__(self, dim=-1):
         self.input_dim = dim
         self.output_dim = dim
+        self.number_params = 0
 
     def forward(self, input):
         raise NotImplementedError('forward')
@@ -22,7 +23,7 @@ class Activation:
 class ReLU(Activation):
 
     def forward(self, input):
-        return torch.relu(input, self.zeros)
+        return torch.relu(input)
     
     def backward(self, grad_wrt_output):
         return None
