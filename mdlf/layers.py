@@ -30,6 +30,7 @@ class Linear:
             else:
                 self.input_dim = input_dim
 
+        # Initialize weights and bias
         self.weights = torch.empty(self.input_dim, self.output_dim).uniform_(0, 1)
         self.bias = torch.empty(self.output_dim).fill_(0)
     

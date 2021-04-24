@@ -1,8 +1,8 @@
 import torch
 import math
-import mdlf.sequential
-import mdlf.linear
-import mdlf.activations
+import mdlf.models as models
+import mdlf.layers as layers
+import mdlf.activations as activations
 
 def generate_dataset(size):
     """
@@ -13,19 +13,20 @@ def generate_dataset(size):
     labels = data.sub(0.5).pow(2).sum(1).sub(1 / (2 * math.pi)).sign().add(1).div(2).long()
     return data, labels
 
-d,l = generate_dataset(1000)
+train_data, train_labels = generate_dataset(1000)
+test_data,  test_labels  = generate_dataset(1000)
 
-model = mdlf.sequential.Sequential()
+# Create sequential model
+model = models.Sequential()
 
-model.add(mdlf.linear.Linear(number_nodes=25, input_dim=2))
-model.add(mdlf.activations.ReLU())
-model.add(mdlf.linear.Linear(number_nodes=25))
-model.add(mdlf.activations.ReLU())
-model.add(mdlf.linear.Linear(number_nodes=25))
-model.add(mdlf.activations.ReLU())
-model.add(mdlf.linear.Linear(number_nodes=1))
-model.add(mdlf.activations.Tanh())
+model.add(layers.Linear(number_nodes=25, input_dim=2))
+model.addactivations.ReLU())
+model.add(layers.Linear(number_nodes=25))
+model.add(activations.ReLU())
+model.add(layers.Linear(number_nodes=25))
+model.add(activations.ReLU())
+model.add(layers.Linear(number_nodes=2))
+model.add(activations.Tanh())
 
 model.compile(optimizer='SGD', loss='MSE')
-
 print(model)
