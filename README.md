@@ -1,1 +1,1 @@
-# MINI DEEP LEARNING FRAMEWORK (mdlf)
+# Mini Deep Learning Framework (mdlf)
