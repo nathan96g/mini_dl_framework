@@ -1,17 +1,23 @@
 import torch
 
-class Linear:
+class Layer:
+    def __str__(self):
+        return "Layer"
+
+class Linear(Layer):
 
     def __init__(self, number_nodes, input_dim=-1):
         self.output_dim = number_nodes
         self.input_dim = input_dim
         self.weights = None
         self.bias = None
+        self.weights_grad = None
+        self.bias_grad = None
 
     def forward(self, input):
         raise NotImplementedError('forward')
     
-    def backward(self, grad_from_output):
+    def backward(self, grad_wrt_output):
         raise NotImplementedError('backward')
     
     def initialize(self, input_dim):
@@ -35,4 +41,4 @@ class Linear:
         self.bias = torch.empty(self.output_dim).fill_(0)
     
     def __str__(self):
-        return "Layer: Linear"
+        return super().__str__() + ": Linear" 

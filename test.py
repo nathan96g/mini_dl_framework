@@ -20,7 +20,7 @@ test_data,  test_labels  = generate_dataset(1000)
 model = models.Sequential()
 
 model.add(layers.Linear(number_nodes=25, input_dim=2))
-model.addactivations.ReLU())
+model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
 model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
