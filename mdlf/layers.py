@@ -12,11 +12,13 @@ class Linear(Layer):
         self.number_params = -1
         self.weights = None
         self.bias = None
+        self.input = None
         self.weights_grad = None
         self.bias_grad = None
 
     def forward(self, input):
-        raise NotImplementedError('forward')
+        self.input = input
+        return self.weights @ input + self.bias
     
     def backward(self, grad_wrt_output):
         raise NotImplementedError('backward')
@@ -44,3 +46,8 @@ class Linear(Layer):
     
     def __str__(self):
         return super().__str__() + ": Linear" 
+
+class Conv1D(Layer):
+
+    def __str__(self):
+        return super().__str__() + ": Convolution 1D" 
