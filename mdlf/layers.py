@@ -1,8 +1,19 @@
+from mdlf.module import Module
 import torch
 
-class Layer:
+class Layer(Module):
     def __str__(self):
         return "Layer"
+
+class Identity(Layer):
+    #TODO: Implement it : do identity
+    def forward(self, input):
+        return input
+    
+    def backward(self, grad_wrt_output):
+        raise NotImplementedError('backward')
+
+
 
 class Linear(Layer):
 

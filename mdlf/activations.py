@@ -1,6 +1,7 @@
+from mdlf.module import Module
 import torch
 
-class Activation:
+class Activation(Module):
     
     def __init__(self, dim=-1):
         self.input_dim = dim
@@ -41,3 +42,17 @@ class Tanh(Activation):
     
     def __str__(self):
         return super().__str__() +": Tanh"
+
+
+class Identity(Activation):
+    def forward(self, input):
+        return input
+    
+    #TODO: Check if right shape
+    def backward(self, *grad_wrt_output):
+        return torch.empty((1)).fill_(1)
+    
+    def __str__(self):
+        return ""
+
+
