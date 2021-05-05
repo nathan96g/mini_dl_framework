@@ -1,3 +1,4 @@
+from mdlf import loss, optimizer
 import torch
 import math
 import mdlf.models as models
@@ -28,7 +29,7 @@ model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=2))
 model.add(activations.Tanh())
 
-model.compile(optimizer='SGD', loss='MSE')
+model.compile(optimizer=optimizer.SGD, loss=loss.MSE)
 print(model)
 
 model.train(train_data, train_labels)

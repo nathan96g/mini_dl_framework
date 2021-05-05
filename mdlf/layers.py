@@ -23,16 +23,28 @@ class Linear(Layer):
         self.number_params = -1
         self.weights = None
         self.bias = None
+        self.output = None
         self.input = None
         self.weights_grad = None
         self.bias_grad = None
 
+#TODO: see if output needed
     def forward(self, input):
         self.input = input
-        return self.weights @ input + self.bias
+        output = self.weights @ input + self.bias
+        self.output = output
+        return output
     
-    def backward(self, grad_wrt_output):
-        raise NotImplementedError('backward')
+    def backward(self, *grad_wrt_output):
+        # delta = layer.backward(deltas[-1]) * activation.backward(self.s_list[i])
+        prev_delta = grad_wrt_output[0]
+        activ_back = grad_wrt_output[1]
+        #TODO : see what do exactly on book
+        curr_delta = blabla(prev_delta) * activ_back
+        self.weights_grad = curr_delta @ self.input
+        self.bias_grad = curr_delta
+
+        return 
     
     def initialize(self, input_dim):
 

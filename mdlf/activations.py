@@ -7,6 +7,7 @@ class Activation(Module):
         self.input_dim = dim
         self.output_dim = dim
         self.number_params = 0
+        self.output = None
 
     def forward(self, input):
         raise NotImplementedError('forward')
@@ -24,7 +25,9 @@ class Activation(Module):
 class ReLU(Activation):
 
     def forward(self, input):
-        return torch.relu(input)
+        output = torch.relu(input)
+        self.output = output
+        return output
     
     def backward(self, grad_wrt_output):
         return None
@@ -35,7 +38,7 @@ class ReLU(Activation):
 class Tanh(Activation):
 
     def forward(self, input):
-        return torch.tanh(input)
+        return NotImplementedError('forward')
     
     def backward(self, grad_wrt_output):
         return None
@@ -46,7 +49,8 @@ class Tanh(Activation):
 
 class Identity(Activation):
     def forward(self, input):
-        return input
+        return NotImplementedError('forward')
+        # return input
     
     #TODO: Check if right shape
     def backward(self, *grad_wrt_output):

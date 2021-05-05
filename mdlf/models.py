@@ -1,5 +1,4 @@
 
-from mdlf.loss import MSE
 import mdlf.activations as activations
 import mdlf.layers as layers
 
@@ -10,10 +9,9 @@ class Sequential:
         self.loss = None
         self.modules = list(modules)
         self.number_params = 0
-        self.s_list = []
-        self.x_list = []
 
         self.layers_activations = []
+        self.optimizer = None
 
 
     def add(self, module):
@@ -48,53 +46,32 @@ class Sequential:
 
 
     def forward(self, input):
-        self.s_list = []
-
         tmp = input    
-        
-        self.x_list = [input]
         for module in self.modules:
             output = module.forward(tmp)
-            if isinstance(module, layers):
-                self.s_list.append(output)
-            elif isinstance(module, activations):
-                self.x_list.append(output)
             tmp = output
-
         return tmp
     
     def backward(self, input, label):
         #simple case : when begin with layer, alternate with activations / layers, and ends with an activation
         output = self.forward(input)
 
-        last_s = self.s_list[-1]
         last_activation = self.layers_activations[-1][1]
-        delta = self.loss.backward(self.forward(input), label) @ last_activation.backward(last_s)  #check if transpose needed or *
-        deltas = [delta]
+        delta = self.loss.backward(self.forward(input), label) @ last_activation.backward(output)  #check if transpose needed or *
 
-        grad_w = []
-        for i, (layer, activation) in reversed(list(enumerate(self.layers_activations))):
-            delta = layer.backward(deltas[-1]) * activation.backward(self.s_list[i])
-            deltas.append(delta)
+        for layer, activation in reversed(self.layers_activations):
+            delta = layer.backward(delta, activation.backward())
 
-            if isinstance(layer, layers.Linear):
-                grad_w_i = delta @ self.x_list[i - 1]
-                grad_b_i = delta
-                grad_w.append(())
+        return delta #useless normally
 
-
-        return None
-
-    def train(self, train_data, train_label):
+    def train(self, train_data, train_label, epochs = 1):
+        for e in epochs :
+            self.optimizer(self, train_data, train_label)
         return None
 
     def compile(self, optimizer, loss):
-
-        if optimizer.upper() == 'SGD':
-            None
-            #TODO : determines if better to do this into another file (to not import MSE here)
-        if loss.upper() == 'MSE':
-            self.loss = MSE
+        self.optimizer = optimizer
+        self.loss = loss
 
         previous_output_dim = -1
         for module in self.modules:
