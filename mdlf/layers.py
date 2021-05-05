@@ -62,7 +62,7 @@ class Linear(Layer):
             else:
                 self.input_dim = input_dim
 
-        # Initialize weights and bias
+        # Initialize weights and bias : TODO : initiate with correct uniform
         self.weights = torch.empty(self.input_dim, self.output_dim).uniform_(0, 1)
         self.bias = torch.empty(self.output_dim).fill_(0)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
