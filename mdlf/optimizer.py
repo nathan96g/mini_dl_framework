@@ -12,7 +12,7 @@ class SGD(Optimizer):
 
     def step(self, model, train_data, train_label):
         
-        #TODO: take random element : https://discuss.pytorch.org/t/efficiently-selecting-a-random-element-from-a-vector/37757
+        #TODO: take random element without any other import: https://discuss.pytorch.org/t/efficiently-selecting-a-random-element-from-a-vector/37757
         train_sample = train_data[0]
         train_sample_label = train_label[0]
         model.backward(train_sample, train_sample_label)
