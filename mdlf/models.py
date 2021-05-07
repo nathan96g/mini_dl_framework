@@ -41,7 +41,7 @@ class Sequential:
 
 #TODO : add loss to modules at the end
 #modify subsequently backward by suppressing the last_activation and init delta to None
-#modify also loss backward to get only 1 possible case
+#modify also activation backward to get only 1 possible case
 
     def forward(self, input):
         tmp = input    
