@@ -25,7 +25,7 @@ class Activation(Module):
 class ReLU(Activation):
 
     def forward(self, input):
-        output = input.where(input >= 0,  empty(input.shape).fill_(0))
+        output = input.where(input >= 0, empty(input.shape).fill_(0))
         self.output = output
         return output
     

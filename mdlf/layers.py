@@ -39,8 +39,7 @@ class Linear(Layer):
         # delta = layer.backward(deltas[-1]) * activation.backward(self.s_list[i])
         prev_delta = grad_wrt_output[0]
         activ_back = grad_wrt_output[1]
-        #TODO : see what do exactly on book
-        curr_delta = blabla(prev_delta) * activ_back
+        curr_delta = (self.weights @ prev_delta) * activ_back #TODO : check if @ or transpose 
         self.weights_grad = curr_delta @ self.input
         self.bias_grad = curr_delta
 
