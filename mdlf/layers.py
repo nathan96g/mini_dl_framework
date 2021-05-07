@@ -12,6 +12,9 @@ class Identity(Layer):
     
     def backward(self, grad_wrt_output):
         raise NotImplementedError('backward')
+    
+    def param(self): 
+        raise NotImplementedError('param')
 
 
 
@@ -44,6 +47,9 @@ class Linear(Layer):
         self.bias_grad = curr_delta
 
         return 
+
+    def param(self): 
+        raise NotImplementedError('param')
     
     def initialize(self, input_dim):
 
@@ -81,6 +87,8 @@ class Conv1D(Layer):
     def backward(self, *gradwrtoutput): 
         raise NotImplementedError
 
+    def param(self): 
+        raise NotImplementedError('param')
 
     def __str__(self):
         return super().__str__() + ": Convolution 1D" 

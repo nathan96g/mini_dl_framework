@@ -5,6 +5,9 @@ class Module(object):
 
     def backward(self, *gradwrtoutput): 
         raise NotImplementedError
+    
+    def param(self): 
+        return []
 
     def __str__(self):
         raise NotImplementedError
