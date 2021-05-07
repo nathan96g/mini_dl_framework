@@ -5,6 +5,12 @@ class Layer(Module):
     def __str__(self):
         return "Layer"
 
+    def param(self): 
+        raise NotImplementedError('param')
+
+    def update(self, *new_weights):
+        raise NotImplementedError('update')
+
 class Identity(Layer):
     #TODO: Implement it : do identity
     def forward(self, input):
@@ -15,6 +21,10 @@ class Identity(Layer):
     
     def param(self): 
         raise NotImplementedError('param')
+
+    def update(self, *new_weights):
+        raise NotImplementedError('update')
+
 
 
 
@@ -50,6 +60,9 @@ class Linear(Layer):
 
     def param(self): 
         raise NotImplementedError('param')
+
+    def update(self, *new_weights):
+        raise NotImplementedError('update')
     
     def initialize(self, input_dim):
 
@@ -89,6 +102,9 @@ class Conv1D(Layer):
 
     def param(self): 
         raise NotImplementedError('param')
+    
+    def update(self, *new_weights):
+        raise NotImplementedError('update')
 
     def __str__(self):
         return super().__str__() + ": Convolution 1D" 

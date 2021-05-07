@@ -9,5 +9,8 @@ class Module(object):
     def param(self): 
         return []
 
+    def update(self, *new_weights):
+        return []
+
     def __str__(self):
         raise NotImplementedError
