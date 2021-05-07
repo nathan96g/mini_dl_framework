@@ -8,7 +8,7 @@ class Layer(Module):
     def param(self): 
         raise NotImplementedError('param')
 
-    def update(self, *new_weights):
+    def update(self, new_weights):
         raise NotImplementedError('update')
 
 class Identity(Layer):
@@ -36,33 +36,32 @@ class Linear(Layer):
         self.number_params = -1
         self.weights = None
         self.bias = None
-        self.output = None
         self.input = None
         self.weights_grad = None
         self.bias_grad = None
 
 # see if output needed
+# if we are in layer l:
+# input : x_{l-1} 
+# output : z_l
     def forward(self, input):
         self.input = input
-        output = self.weights @ input + self.bias
-        self.output = output
-        return output
+        return self.weights.T @ input + self.bias
     
     def backward(self, *grad_wrt_output):
-        # delta = layer.backward(deltas[-1]) * activation.backward(self.s_list[i])
-        prev_delta = grad_wrt_output[0]
-        activ_back = grad_wrt_output[1]
-        curr_delta = (self.weights @ prev_delta) * activ_back #TODO : check if @ or transpose 
-        self.weights_grad = curr_delta @ self.input
-        self.bias_grad = curr_delta
-
-        return 
+        curr_delta = grad_wrt_output[0] #delta_l
+        self.weights_grad = self.input.unsqueeze(1) @ curr_delta.unsqueeze(0)
+        self.bias_grad = curr_delta     
+        prev_delta_partial = (self.weights @ curr_delta) # delta_{l-1} without componentwise activation mult
+        
+        return prev_delta_partial 
 
     def param(self): 
-        raise NotImplementedError('param')
+        return [(self.weights, self.weights_grad), (self.bias, self.bias_grad)]
 
-    def update(self, *new_weights):
-        raise NotImplementedError('update')
+    def update(self, new_weights):
+        self.weights = new_weights[0]
+        self.bias = new_weights[1]
     
     def initialize(self, input_dim):
 

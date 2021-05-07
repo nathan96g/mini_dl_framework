@@ -7,12 +7,12 @@ class Activation(Module):
         self.input_dim = dim
         self.output_dim = dim
         self.number_params = 0
-        self.output = None
+        self.input = None
 
     def forward(self, input):
         raise NotImplementedError('forward')
     
-    def backward(self, grad_from_output):
+    def backward(self, *grad_from_output):
         raise NotImplementedError('backward')
     
     def initialize(self, input_dim):
@@ -23,14 +23,19 @@ class Activation(Module):
         return "Activation"
 
 class ReLU(Activation):
-
+    #store z_l : z_l -> activation(z_l) -> x_l
     def forward(self, input):
-        output = input.where(input >= 0, empty(input.shape).fill_(0))
-        self.output = output
-        return output
+        self.input = input #
+        return input.where(input >= 0, empty(input.shape).fill_(0))
     
+    #compute activation_deriv(z_l)
+    #TODO : think if the delta{L+1} is computed componentwise !!! => if yes can greatly simplify
     def backward(self, *grad_wrt_output):
-        return None
+        activ_eval = (self.input >= 0).to(self.input.dtype)
+        if len(grad_wrt_output) == 0 :
+            return activ_eval
+        else :
+            return grad_wrt_output[0] * activ_eval
     
     def __str__(self):
         return super().__str__() + ": ReLU"

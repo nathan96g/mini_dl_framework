@@ -2,7 +2,7 @@ from mdlf.module import Module
 
 
 class Loss(Module):   
-    #TODO : just evaluation
+    #TODO : just evaluation : return it and print it
     def forward(self, *input): 
         raise NotImplementedError
     #TODO : just derivate
@@ -17,9 +17,9 @@ class MSE(Loss):
     #TODO
     def forward(self, *input): 
         raise NotImplementedError
-    #TODO
+    #TODO : change it
     def backward(self, *gradwrtoutput): 
-        raise NotImplementedError
+        return gradwrtoutput[0]
     #TODO : See if needed
     def __str__(self):
         raise NotImplementedError

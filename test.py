@@ -27,9 +27,9 @@ model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
 model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=2))
-model.add(activations.Tanh())
+model.add(activations.ReLU())
 
-model.compile(optimizer=optimizer.SGD, loss=loss.MSE)
+model.compile(optimizer=optimizer.SGD(), loss=loss.MSE())
 print(model)
 
 model.train(train_data, train_labels)
