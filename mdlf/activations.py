@@ -29,12 +29,13 @@ class ReLU(Activation):
         self.output = output
         return output
     
-    def backward(self, grad_wrt_output):
+    def backward(self, *grad_wrt_output):
         return None
     
     def __str__(self):
         return super().__str__() + ": ReLU"
 
+#TODO
 class Tanh(Activation):
 
     def forward(self, input):
@@ -46,7 +47,7 @@ class Tanh(Activation):
     def __str__(self):
         return super().__str__() +": Tanh"
 
-
+#TODO : implement activation that changes nothing
 class Identity(Activation):
     def forward(self, input):
         return NotImplementedError('forward')

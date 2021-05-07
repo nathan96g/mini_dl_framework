@@ -2,10 +2,10 @@ from mdlf.module import Module
 
 
 class Loss(Module):   
-    #just evaluation
+    #TODO : just evaluation
     def forward(self, *input): 
         raise NotImplementedError
-    #just derivate
+    #TODO : just derivate
     def backward(self, *gradwrtoutput): 
         raise NotImplementedError
 
@@ -14,11 +14,12 @@ class Loss(Module):
 
 
 class MSE(Loss):
+    #TODO
     def forward(self, *input): 
         raise NotImplementedError
-
+    #TODO
     def backward(self, *gradwrtoutput): 
         raise NotImplementedError
-
+    #TODO : See if needed
     def __str__(self):
         raise NotImplementedError

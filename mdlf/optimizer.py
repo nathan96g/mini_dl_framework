@@ -17,7 +17,7 @@ class SGD(Optimizer):
         train_sample_label = None
 
         model.backward(train_sample, train_sample_label)
-        #TODO: iterate over all layers and update their weights with their gradient computed previously
+        #iterate over all layers and update their weights with their gradient computed previously
         # for module in model.modules:
             # if instanceof(layer):
             #     module.param += lambda_ * module.grad

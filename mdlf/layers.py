@@ -70,7 +70,18 @@ class Linear(Layer):
     def __str__(self):
         return super().__str__() + ": Linear" 
 
+#TODO
 class Conv1D(Layer):
+
+    def initialize(self, input_dim):
+        raise NotImplementedError
+
+    def forward(self, *input): 
+        raise NotImplementedError
+
+    def backward(self, *gradwrtoutput): 
+        raise NotImplementedError
+
 
     def __str__(self):
         return super().__str__() + ": Convolution 1D" 
