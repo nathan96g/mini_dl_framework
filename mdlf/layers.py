@@ -1,5 +1,5 @@
 from mdlf.module import Module
-import torch
+from torch import empty
 
 class Layer(Module):
     def __str__(self):
@@ -28,7 +28,7 @@ class Linear(Layer):
         self.weights_grad = None
         self.bias_grad = None
 
-#TODO: see if output needed
+# see if output needed
     def forward(self, input):
         self.input = input
         output = self.weights @ input + self.bias
@@ -63,8 +63,8 @@ class Linear(Layer):
                 self.input_dim = input_dim
 
         # Initialize weights and bias : TODO : initiate with correct uniform
-        self.weights = torch.empty(self.input_dim, self.output_dim).uniform_(0, 1)
-        self.bias = torch.empty(self.output_dim).fill_(0)
+        self.weights = empty(self.input_dim, self.output_dim).uniform_(0, 1)
+        self.bias = empty(self.output_dim).fill_(0)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
     
     def __str__(self):

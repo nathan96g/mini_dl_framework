@@ -1,5 +1,5 @@
 from mdlf.module import Module
-import torch
+from torch import empty
 
 class Activation(Module):
     
@@ -25,7 +25,7 @@ class Activation(Module):
 class ReLU(Activation):
 
     def forward(self, input):
-        output = torch.relu(input)
+        output = input.where(input >= 0,  empty(input.shape).fill_(0))
         self.output = output
         return output
     
@@ -55,7 +55,7 @@ class Identity(Activation):
     
     #TODO: Check if right shape
     def backward(self, *grad_wrt_output):
-        return torch.empty((1)).fill_(1)
+        return empty((1)).fill_(1)
     
     def __str__(self):
         return ""

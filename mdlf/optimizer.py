@@ -1,4 +1,3 @@
-import torch
 from torch import empty
 
 
@@ -23,3 +22,12 @@ class SGD(Optimizer):
             #     module.param += lambda_ * module.grad
 
         return model
+
+#TODO : see if time to implement => require to store list of grad in modules and not just grad
+class minibatch_SGD(Optimizer):
+    def __init__(self, lambda_, mini_batch_size):
+        self.lambda_ = lambda_
+        self.mini_batch_size = mini_batch_size
+
+    def step(model, train_data, train_label):
+        raise NotImplementedError
