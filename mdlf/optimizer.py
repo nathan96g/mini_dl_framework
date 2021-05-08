@@ -1,5 +1,6 @@
 from torch import empty
-
+import mdlf.activations as activations
+import mdlf.layers as layers
 
 class Optimizer:
     def step(self, model, train_data, train_label):
@@ -11,18 +12,21 @@ class SGD(Optimizer):
         self.lambda_ = lambda_
 
     def step(self, model, train_data, train_label):
-        
+        #when step is called, need to iterate on all the data points for 1 epochs
+
         #TODO: take random element without any other import: https://discuss.pytorch.org/t/efficiently-selecting-a-random-element-from-a-vector/37757
         train_sample = train_data[0]
         train_sample_label = train_label[0]
         model.backward(train_sample, train_sample_label)
-        for module in model.modules:
-            updates = []
-            for param in module.param():
-                weight = param[0]
-                weight_grad = param[1]
-                updates.append(weight + self.lambda_ * weight_grad)
-            module.update(updates)
+        for module in model.modules :
+            #Does not do if module is a Identity Activation or Identity Layer
+            if not (issubclass(type(module),activations.Identity) or issubclass(type(module),layers.Identity)) :
+                updates = []
+                for param in module.param():
+                    weight = param[0]
+                    weight_grad = param[1]
+                    updates.append(weight + self.lambda_ * weight_grad)
+                module.update(updates)
         return model
 
 #TODO : see if time to implement => require to store list of grad in modules and not just grad

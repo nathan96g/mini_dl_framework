@@ -12,20 +12,38 @@ class Layer(Module):
         raise NotImplementedError('update')
 
 class Identity(Layer):
-    #TODO: Implement it : do identity
+
+    def __init__(self, input_dim=-1):
+        self.output_dim = input_dim
+        self.input_dim = input_dim
+        self.number_params = 0
+        self.weights = None
+        self.bias = None
+        self.input = None
+        self.weights_grad = None
+        self.bias_grad = None
+
     def forward(self, input):
         return input
     
     def backward(self, grad_wrt_output):
-        raise NotImplementedError('backward')
+        return grad_wrt_output
+        #raise NotImplementedError('backward')
+    
+    def initialize(self, input_dim):
+        #if the first module is an identity layer -> input_dim is size of train_data (2)
+        if input_dim == -1 : 
+            self.input_dim = 2
+            self.output_dim = 2
+        else :
+            self.input_dim = input_dim
+            self.output_dim = input_dim
     
     def param(self): 
         raise NotImplementedError('param')
 
     def update(self, *new_weights):
         raise NotImplementedError('update')
-
-
 
 
 class Linear(Layer):

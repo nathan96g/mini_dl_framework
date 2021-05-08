@@ -5,6 +5,8 @@ import mdlf.models as models
 import mdlf.layers as layers
 import mdlf.activations as activations
 
+
+
 def generate_dataset(size):
     """
     Generates a training and a test set of 'size' points sampled uniformly in [0,1]^2, 
@@ -20,6 +22,7 @@ test_data,  test_labels  = generate_dataset(1000)
 # Create sequential model
 model = models.Sequential()
 
+model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25, input_dim=2))
 model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
@@ -27,9 +30,10 @@ model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
 model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=2))
-model.add(activations.ReLU())
+model.add(activations.Tanh())
 
 model.compile(optimizer=optimizer.SGD(), loss=loss.MSE())
+
 print(model)
 
 model.train(train_data, train_labels)

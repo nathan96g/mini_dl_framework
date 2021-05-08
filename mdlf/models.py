@@ -13,7 +13,7 @@ class Sequential:
         self.layers_activations = None
         self.optimizer = None
 
-
+    
     def add(self, module):
         self.modules.append(module)
 
@@ -21,23 +21,44 @@ class Sequential:
 # will correct the model to get always an alternance (layer, activation):
 # will add activation identity of identity layer.
 # begins with layer, ends with activation 
+
+##### Mise a jour #####
+#  begins with layer and ends with activation 
+# + correct model if alternance “layer-activation“ is not respected
     def reconstruct_model(self):
         module_list = []
         prev_is_layer = False
-        for module in self.modules:
-            if issubclass(type(module),activations.Activation):
-                module_list.append(module)
-                if not prev_is_layer:
-                    module_list.append(layers.Identity())
-            elif issubclass(type(module), layers.Layer):
-                module_list.append(module)
-                if prev_is_layer:
-                    module_list.append(activations.Identity())
-                prev_is_layer = True
 
-        #TODO: if doesn't finish with activation add identity layer
+        #check if first module is activation, if yes add a layer identity before
+        if issubclass(type(self.modules[0]),activations.Activation): 
+            module_list.append(layers.Identity())
+            prev_is_layer = True
+        
+        for module in self.modules:
+            if prev_is_layer :
+                if issubclass(type(module),activations.Activation) :
+                    module_list.append(module)
+                    prev_is_layer = False  
+                else : 
+                    module_list.append(activations.Identity())
+                    module_list.append(module)
+                    prev_is_layer = True  
+            else : 
+                if issubclass(type(module),layers.Layer) :
+                    module_list.append(module)  
+                    prev_is_layer = True 
+                else : 
+                    module_list.append(layers.Identity())
+                    module_list.append(module)
+                    prev_is_layer = False 
+
+        #check if last module is an activation, if no add activation identity 
+        if prev_is_layer : 
+            module_list.append(activations.Identity())
+
         self.modules = module_list
         return True
+
 
 #TODO : add loss to modules at the end
 #modify subsequently backward by suppressing the last_activation and init delta to None
@@ -65,7 +86,7 @@ class Sequential:
 
     def train(self, train_data, train_label, epochs = 10):
         #TODO: change it after corrected reconstruct model or transform layer form to get directly (layer, activation) together
-        # self.reconstruct_model()
+        #self.reconstruct_model()
         for e in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
         return self
@@ -73,6 +94,7 @@ class Sequential:
     def compile(self, optimizer, loss):
         self.optimizer = optimizer
         self.loss = loss
+        self.reconstruct_model()
 
         previous_output_dim = -1
         for module in self.modules:
@@ -83,7 +105,8 @@ class Sequential:
     
     def __str__(self):
 
-        descriptions = [[str(module), str(module.input_dim), str(module.output_dim), str(module.number_params)] for module in self.modules]
+        #does not show Identity Activation or Identity Layer 
+        descriptions = [[str(module), str(module.input_dim), str(module.output_dim), str(module.number_params)] for module in self.modules if not (issubclass(type(module),activations.Identity) or issubclass(type(module),layers.Identity)) ]
         descriptions = [['Modules', 'Input dimension', 'Output dimension', 'Number of parameters']] + descriptions
 
         lens = [max(map(len, col)) for col in zip(*descriptions)]
