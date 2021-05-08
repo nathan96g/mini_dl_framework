@@ -12,18 +12,15 @@ class SGD(Optimizer):
         self.lambda_ = lambda_
 
     def step(self, model, train_data, train_label):
-        #when step is called, need to iterate on all the data points for 1 epochs
-        random_int = empty(1000).uniform_(0, 1).sort().indices
+        #when step is called, need to iterate on all the data points for 1 epoch
+        random_int = empty(train_data.size(0)).uniform_(0, 1).sort().indices
         
-        #TODO: take random element without any other import: https://discuss.pytorch.org/t/efficiently-selecting-a-random-element-from-a-vector/37757
-        for n in range(1000) :
-            train_sample= train_data[random_int[n]]
-            train_sample_label= train_label[random_int[n]]
+        for n in random_int :
+            train_sample= train_data[n]
+            train_sample_label= train_label[n]
             
             model.backward(train_sample, train_sample_label)
             for module in model.modules :
-               #Does not do if module is a Identity Activation or Identity Layer
-                if not (issubclass(type(module),activations.Identity) or issubclass(type(module),layers.Identity)) :
                    updates = []
                    for param in module.param():
                        weight = param[0]

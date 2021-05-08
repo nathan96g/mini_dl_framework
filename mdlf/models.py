@@ -1,4 +1,3 @@
-
 import mdlf.activations as activations
 import mdlf.layers as layers
 
@@ -17,10 +16,6 @@ class Sequential:
     def add(self, module):
         self.modules.append(module)
 
-#TODO : Doesn't work, used to instantiate layers_activations and correct model: 
-# will correct the model to get always an alternance (layer, activation):
-# will add activation identity of identity layer.
-# begins with layer, ends with activation 
 
 ##### Mise a jour #####
 #  begins with layer and ends with activation 
@@ -85,8 +80,6 @@ class Sequential:
         return delta #useless normally
 
     def train(self, train_data, train_label, epochs = 10):
-        #TODO: change it after corrected reconstruct model or transform layer form to get directly (layer, activation) together
-        #self.reconstruct_model()
         for e in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
         return self

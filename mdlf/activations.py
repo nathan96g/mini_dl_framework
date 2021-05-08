@@ -36,7 +36,6 @@ class ReLU(Activation):
         if len(grad_wrt_output) == 0 :
             return activ_eval
         else :
-            a = grad_wrt_output[0] * activ_eval
             return grad_wrt_output[0] * activ_eval
     
     def __str__(self):

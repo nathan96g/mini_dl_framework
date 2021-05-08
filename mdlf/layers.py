@@ -33,6 +33,7 @@ class Identity(Layer):
     def initialize(self, input_dim):
         #if the first module is an identity layer -> input_dim is size of train_data (2)
         if input_dim == -1 : 
+            # !!! Changer et mettre erreur !!!
             self.input_dim = 2
             self.output_dim = 2
         else :
@@ -40,10 +41,10 @@ class Identity(Layer):
             self.output_dim = input_dim
     
     def param(self): 
-        raise NotImplementedError('param')
+        return []
 
     def update(self, *new_weights):
-        raise NotImplementedError('update')
+        return []
 
 
 class Linear(Layer):
