@@ -25,8 +25,7 @@ class Activation(Module):
 class ReLU(Activation):
     #store z_l : z_l -> activation(z_l) -> x_l
     def forward(self, input):
-        #pk self.input n'est pas égale à input.where(input >= 0, empty(input.shape).fill_(0)) ?
-        self.input = input #
+        self.input = input 
         return input.where(input >= 0, empty(input.shape).fill_(0))
     
     #compute activation_deriv(z_l)
@@ -44,8 +43,8 @@ class ReLU(Activation):
 class Tanh(Activation):
 
     def forward(self, input):
-        self.input = input.tanh()
-        return self.input
+        self.input = input
+        return input.tanh()
     
     def backward(self, *grad_wrt_output):
         derivative_Tanh = (1 - (self.input.tanh() ** 2)).to(self.input.dtype)
@@ -59,13 +58,14 @@ class Tanh(Activation):
 
 class Identity(Activation):
     def forward(self, input):
+        self.input = input
         return input
     
     #TODO: Check if right shape
     def backward(self, *grad_wrt_output):
         if len(grad_wrt_output) == 0 :
             # change !!!
-            return empty((1)).fill_(1) 
+            return empty((self.input.size())).fill_(1) 
         else :
             return grad_wrt_output[0] * empty((grad_wrt_output[0].size())).fill_(1)
     
