@@ -64,7 +64,6 @@ class Identity(Activation):
     #TODO: Check if right shape
     def backward(self, *grad_wrt_output):
         if len(grad_wrt_output) == 0 :
-            # change !!!
             return empty((self.input.size())).fill_(1) 
         else :
             return grad_wrt_output[0] * empty((grad_wrt_output[0].size())).fill_(1)
