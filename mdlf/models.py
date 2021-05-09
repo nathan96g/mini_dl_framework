@@ -1,5 +1,6 @@
 import mdlf.activations as activations
 import mdlf.layers as layers
+from torch import empty
 
 class Sequential:
 
@@ -59,18 +60,21 @@ class Sequential:
 #modify subsequently backward by suppressing the last_activation and init delta to None
 #modify also activation backward to get only 1 possible case
 
-    def forward(self, input):
+    def forward(self, input,label):
         tmp = input    
         
         for module in self.modules:
             output = module.forward(tmp)
             tmp = output
-        return tmp
+
+        outpout = self.loss.forward(tmp,label)
+
+        return outpout
     
         #simple case : when begin with layer, alternate with activations / layers, and ends with an activation
         #TODO : implement reconstruct to modify modules
     def backward(self, input, label):
-        output = self.forward(input)
+        output = self.forward(input,label)
         last_activation = self.modules[-1]
 
         delta = self.loss.backward(output, label) * last_activation.backward()  #check if transpose needed or @
@@ -80,9 +84,32 @@ class Sequential:
         return delta #useless normally
 
     def train(self, train_data, train_label, epochs = 10):
+        loss_per_epoch = []
+        accuracy_per_epoch = []
+
         for e in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
-        return self
+            loss,accuracy = self.loss_accuracy_function(train_data,train_label)
+            loss_per_epoch.append(loss)
+            accuracy_per_epoch.append(accuracy)
+        return loss_per_epoch, accuracy_per_epoch 
+
+    def loss_accuracy_function(self,train_data,train_label):
+        loss = []
+        prediction = []
+        size = train_data.size(0)
+
+        for i in range (size):
+            loss.append(self.forward(train_data[i],train_label[i]))
+            prediction.append(self.loss.input) 
+
+        prediction =[1 if n >=0.5 else 0 for n in prediction]
+        result = [i1 - i2 for i1, i2 in zip(prediction, train_label.tolist())]
+        accuracy = 100 - result.count(0)/size * 100
+        
+        return sum(loss), accuracy
+
+
 
     def compile(self, optimizer, loss):
         self.optimizer = optimizer
