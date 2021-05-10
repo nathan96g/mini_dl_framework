@@ -8,7 +8,7 @@ class Optimizer:
 
 #TODO: determine get a good lambda_
 class SGD(Optimizer):
-    def __init__(self, lambda_ = 0.001):
+    def __init__(self, lambda_ = 0.00001):
         self.lambda_ = lambda_
 
     def step(self, model, train_data, train_label):
@@ -19,14 +19,17 @@ class SGD(Optimizer):
             train_sample= train_data[n]
             train_sample_label= train_label[n]
             
+            # set gradient to zero 
+            model.grad_zero()
+            
             model.backward(train_sample, train_sample_label)
             for module in model.modules :
-                   updates = []
-                   for param in module.param():
+                updates = []
+                for param in module.param():
                        weight = param[0]
                        weight_grad = param[1]
-                       updates.append(weight + self.lambda_ * weight_grad)
-                   module.update(updates)
+                       updates.append(weight - self.lambda_ * weight_grad)
+                module.update(updates)
             return model
 
 #TODO : see if time to implement => require to store list of grad in modules and not just grad

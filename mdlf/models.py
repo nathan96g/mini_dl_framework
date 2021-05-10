@@ -60,7 +60,7 @@ class Sequential:
 #modify subsequently backward by suppressing the last_activation and init delta to None
 #modify also activation backward to get only 1 possible case
 
-    def forward(self, input,label):
+    def forward(self, input, label):
         tmp = input    
         
         for module in self.modules:
@@ -77,8 +77,9 @@ class Sequential:
         output = self.forward(input,label)
         last_activation = self.modules[-1]
 
+
         delta = self.loss.backward(output, label) * last_activation.backward()  #check if transpose needed or @
-        for module in reversed(self.modules[:-1]): #get last layer (since -1 )
+        for module in reversed(self.modules[:-1]): #get the second last layer (since -1 )
             delta = module.backward(delta)
 
         return delta #useless normally
@@ -127,7 +128,6 @@ class Sequential:
         test_loss,test_accuracy, predicted_labels = self.loss_accuracy_function(test_data,test_label)
         return test_loss,test_accuracy,predicted_labels
 
-
     def compile(self, optimizer, loss):
         self.optimizer = optimizer
         self.loss = loss
@@ -138,7 +138,16 @@ class Sequential:
             module.initialize(input_dim = previous_output_dim)
             previous_output_dim = module.output_dim
             self.number_params += module.number_params
+        
+        #add loss module at the end of modules 
+        #self.modules.append(loss)
+
         return
+    
+    def grad_zero(self):
+        for module in self.modules:
+            if issubclass(type(module),layers.Linear):
+                module.gradient_to_zero()
     
     def __str__(self):
 

@@ -68,6 +68,7 @@ class Linear(Layer):
         return self.weights.T @ input + self.bias
     
     def backward(self, *grad_wrt_output):
+        #print("grad_wrt_output",grad_wrt_output)
         curr_delta = grad_wrt_output[0] #delta_l
         self.weights_grad = self.input.unsqueeze(1) @ curr_delta.unsqueeze(0)
         self.bias_grad = curr_delta     
@@ -80,7 +81,13 @@ class Linear(Layer):
 
     def update(self, new_weights):
         self.weights = new_weights[0]
+        #print("new_wieghts",new_weights[0])
         self.bias = new_weights[1]
+        #print("new_wieghts_bias",new_weights[1])
+
+    def gradient_to_zero(self):
+        self.weights_grad[:, :] = 0.0
+        self.bias_grad[:] = 0.0
     
     def initialize(self, input_dim):
 
@@ -102,7 +109,13 @@ class Linear(Layer):
         self.weights = empty(self.input_dim, self.output_dim).uniform_(0, 1)
         self.bias = empty(self.output_dim).fill_(0)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
-    
+        
+        # Initialize gradient weights and gradient bias :
+        self.weights_grad = empty((self.weights.shape))
+        self.weights_grad[:, :] = 0.0
+        self.bias_grad = empty((self.bias.shape))
+        self.bias_grad[:] = 0.0
+
     def __str__(self):
         return super().__str__() + ": Linear" 
 

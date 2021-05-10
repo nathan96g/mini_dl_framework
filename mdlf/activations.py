@@ -31,7 +31,7 @@ class ReLU(Activation):
     #compute activation_deriv(z_l)
     #TODO : think if the delta{L+1} is computed componentwise !!! => if yes can greatly simplify
     def backward(self, *grad_wrt_output):
-        activ_eval = (self.input >= 0).to(self.input.dtype)
+        activ_eval = (self.input >= 0).to(self.input.dtype)        
         if len(grad_wrt_output) == 0 :
             return activ_eval
         else :
