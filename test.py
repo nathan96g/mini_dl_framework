@@ -40,17 +40,16 @@ train_loss_per_epochs, train_accuracy_per_epochs = model.train(train_data, train
 train_loss_per_epochs, train_accuracy_per_epochs, test_loss_per_epochs, test_accuracy_per_epochs = model.train(train_data, train_label,epochs = 10, test_data =test_data, test_label= test_label)
 
 #fit function 
-test_loss,test_accuracy = model.fit(test_data,test_label)
+test_loss,test_accuracy,predicted_labels = model.fit(test_data,test_label)
 
 for i in range(10):
     print("epochs number {} : Loss = {} and Accuracy = {}".format( i+1,train_loss_per_epochs[i] , train_accuracy_per_epochs[i] ))
 
+"""
+#Plot result of Mini DL framework
+utils.plot_circle_with_predicted_labels(test_data, test_label, predicted_label=predicted_labels)
 
 #Apply tensorflow neural network on data
-
-
-
-"""
 utils.call_NN_tensorflow( train_data, train_label, test_data, test_label,
                 epochs= 10, 
                 show_accuracy = True,

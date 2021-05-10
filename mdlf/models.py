@@ -96,12 +96,12 @@ class Sequential:
 
         for e in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
-            loss,accuracy = self.loss_accuracy_function(train_data,train_label)
+            loss,accuracy,_ = self.loss_accuracy_function(train_data,train_label)
             loss_per_epoch_train.append(loss)
             accuracy_per_epoch_train.append(accuracy)
 
             if test_is_here :
-                loss,accuracy = self.loss_accuracy_function(test_data,test_label)
+                loss,accuracy,_ = self.loss_accuracy_function(test_data,test_label)
                 loss_per_epoch_test.append(loss)
                 accuracy_per_epoch_test.append(accuracy)
 
@@ -121,11 +121,11 @@ class Sequential:
         result = [i1 - i2 for i1, i2 in zip(prediction, train_label.tolist())]
         accuracy = 100 - result.count(0)/size * 100
 
-        return sum(loss), accuracy
+        return sum(loss), accuracy, prediction
     
     def fit(self,test_data,test_label):
-        test_loss,test_accuracy = self.loss_accuracy_function(test_data,test_label)
-        return test_loss,test_accuracy
+        test_loss,test_accuracy, predicted_labels = self.loss_accuracy_function(test_data,test_label)
+        return test_loss,test_accuracy,predicted_labels
 
 
     def compile(self, optimizer, loss):

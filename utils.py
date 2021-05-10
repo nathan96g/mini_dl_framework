@@ -8,13 +8,13 @@ from tensorflow.keras import layers as layers_tf
 from tensorflow.keras import models as models_tf
 
 # print plot with or with not the predicted values form neural net 
-def plot_circle_with_predicted_labels (data, label, predicted_label=-1):
+def plot_circle_with_predicted_labels (data, label, predicted_label=-1, tensorflow = False):
     x_cor, y_cor = data[:,0],data[:,1] 
     
     # if the function is given as input the predicted_label else otherwise 
     if type(predicted_label) != int:
         # -1 if correct value for 0, 1 if correct value for 1, 0 if uncorrect prediction 
-        correctness = -label -predicted_label + 1 
+        correctness = -label - torch.tensor(predicted_label) + 1 
         Accuracy = 100 - round(correctness.tolist().count(0)/data.size(0) * 100, 2)
         
     else : 
@@ -38,8 +38,11 @@ def plot_circle_with_predicted_labels (data, label, predicted_label=-1):
     ax.tick_params(axis="x",labelsize = 15)
     ax.tick_params(axis="y",labelsize = 15)
     
-    if type(predicted_label) != int:
-            ax.set_title('Predicted values for test set \n  Accuracy = {}'.format(Accuracy), fontsize = 25, fontweight='bold',pad=20)
+    if type(predicted_label) != int and tensorflow == True :
+            ax.set_title('TensorFlow \n Predicted values for test set \n  Accuracy = {}'.format(Accuracy), fontsize = 20, fontweight='bold',pad=5)
+            fig.savefig('Predicted_values'+'.png')
+    elif type(predicted_label) != int and tensorflow == False :
+            ax.set_title('Mini DL framework \n Predicted values for test set \n  Accuracy = {}'.format(Accuracy), fontsize = 20, fontweight='bold',pad=5)
             fig.savefig('Predicted_values'+'.png')
     else : 
             ax.set_title('Training set', fontsize = 25, fontweight='bold',pad=20)
@@ -82,7 +85,7 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
     if show_points :
         predictions = model_tf.predict(test_data.tolist())
         predictions =[1 if i >=0.5 else 0 for i in predictions]
-        plot_circle_with_predicted_labels(test_data,test_labels,torch.tensor(predictions))
+        plot_circle_with_predicted_labels(test_data,test_labels,predictions,tensorflow = True)
 
 
 
