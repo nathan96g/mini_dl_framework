@@ -83,16 +83,30 @@ class Sequential:
 
         return delta #useless normally
 
-    def train(self, train_data, train_label, epochs = 10):
-        loss_per_epoch = []
-        accuracy_per_epoch = []
+    def train(self, train_data, train_label, epochs = 10, test_data = empty((0,0))  , test_label = empty((0,0))):
+
+        loss_per_epoch_train = []
+        accuracy_per_epoch_train  = []
+        test_is_here = False
+
+        if test_data.size() != (0,0) and test_label.size() != (0,0) :  
+            test_is_here =  True 
+            loss_per_epoch_test = []
+            accuracy_per_epoch_test  = []
 
         for e in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
             loss,accuracy = self.loss_accuracy_function(train_data,train_label)
-            loss_per_epoch.append(loss)
-            accuracy_per_epoch.append(accuracy)
-        return loss_per_epoch, accuracy_per_epoch 
+            loss_per_epoch_train.append(loss)
+            accuracy_per_epoch_train.append(accuracy)
+
+            if test_is_here :
+                loss,accuracy = self.loss_accuracy_function(test_data,test_label)
+                loss_per_epoch_test.append(loss)
+                accuracy_per_epoch_test.append(accuracy)
+
+        if test_is_here : return loss_per_epoch_train, accuracy_per_epoch_train, loss_per_epoch_test, accuracy_per_epoch_test
+        else : return loss_per_epoch_train, accuracy_per_epoch_train 
 
     def loss_accuracy_function(self,train_data,train_label):
         loss = []
@@ -106,9 +120,12 @@ class Sequential:
         prediction =[1 if n >=0.5 else 0 for n in prediction]
         result = [i1 - i2 for i1, i2 in zip(prediction, train_label.tolist())]
         accuracy = 100 - result.count(0)/size * 100
-        
-        return sum(loss), accuracy
 
+        return sum(loss), accuracy
+    
+    def fit(self,test_data,test_label):
+        test_loss,test_accuracy = self.loss_accuracy_function(test_data,test_label)
+        return test_loss,test_accuracy
 
 
     def compile(self, optimizer, loss):
