@@ -20,7 +20,6 @@ def generate_dataset(size):
 train_data, train_label = generate_dataset(1000)
 test_data,  test_label  = generate_dataset(1000)
 
-
 # Create sequential model
 model = models.Sequential()
 
@@ -31,7 +30,7 @@ model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
 model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=1))
-model.add(activations.ReLU())
+model.add(activations.Tanh())
 
 model.compile(optimizer=optimizer.SGD(), loss=loss.MSE())
 
@@ -43,15 +42,19 @@ train_loss_per_epochs, train_accuracy_per_epochs, test_loss_per_epochs, test_acc
 test_loss,test_accuracy,predicted_labels = model.fit(test_data,test_label)
 
 for i in range(10):
-    print("epochs number {} : Loss = {} and Accuracy = {}".format( i+1,train_loss_per_epochs[i] , train_accuracy_per_epochs[i] ))
+   print("epochs number {} : Loss = {} and Accuracy = {}".format( i+1,train_loss_per_epochs[i] , train_accuracy_per_epochs[i] ))
 
 """
 #Plot result of Mini DL framework
-utils.plot_circle_with_predicted_labels(test_data, test_label, predicted_label=predicted_labels)
+#utils.plot_circle_with_predicted_labels(test_data, test_label, predicted_label=predicted_labels)
 
 #Apply tensorflow neural network on data
 utils.call_NN_tensorflow( train_data, train_label, test_data, test_label,
                 epochs= 10, 
                 show_accuracy = True,
                 show_points = True)
+
 """
+
+
+

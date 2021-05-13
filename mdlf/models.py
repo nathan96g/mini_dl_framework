@@ -118,7 +118,7 @@ class Sequential:
             loss.append(self.forward(train_data[i],train_label[i]))
             prediction.append(self.loss.input) 
 
-        prediction =[1 if n >=0.5 else 0 for n in prediction]
+        prediction =[1 if n >=0 else 0 for n in prediction]
         result = [i1 - i2 for i1, i2 in zip(prediction, train_label.tolist())]
         accuracy = 100 - result.count(0)/size * 100
 

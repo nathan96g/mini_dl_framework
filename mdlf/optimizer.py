@@ -14,7 +14,6 @@ class SGD(Optimizer):
     def step(self, model, train_data, train_label):
         #when step is called, need to iterate on all the data points for 1 epoch
         random_int = empty(train_data.size(0)).uniform_(0, 1).sort().indices
-        
         for n in random_int :
             train_sample= train_data[n]
             train_sample_label= train_label[n]

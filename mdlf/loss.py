@@ -18,13 +18,13 @@ class MSE(Loss):
     def forward(self, input, label): 
         self.input = input
         self.label = label
-        loss_mse = ((input - label) ** 2).mean()
+        loss_mse = (0.5*(input - label) ** 2).mean()
         return loss_mse
         #raise NotImplementedError
 
     #TODO : change it
     def backward(self, input, label):
-        outpout =  2 * (input - label)
+        outpout =  input - label
         return outpout
         #return gradwrtoutput[0]
 
