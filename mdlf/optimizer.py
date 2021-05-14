@@ -8,7 +8,7 @@ class Optimizer:
 
 #TODO: determine get a good lambda_
 class SGD(Optimizer):
-    def __init__(self, lambda_ = 0.00001):
+    def __init__(self, lambda_ = 0.01):
         self.lambda_ = lambda_
 
     def step(self, model, train_data, train_label):
@@ -32,7 +32,7 @@ class SGD(Optimizer):
             return model
 
 #TODO : see if time to implement => require to store list of grad in modules and not just grad
-class minibatch_SGD(Optimizer):
+class Minibatch_SGD(Optimizer):
     def __init__(self, lambda_, mini_batch_size):
         self.lambda_ = lambda_
         self.mini_batch_size = mini_batch_size

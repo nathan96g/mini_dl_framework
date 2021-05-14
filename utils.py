@@ -60,17 +60,19 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
     model_tf.add(layers_tf.Dense(25, activation='relu'))
     model_tf.add(layers_tf.Dense(25, activation='relu'))
     model_tf.add(layers_tf.Dense(25, activation='relu'))
-    model_tf.add(layers_tf.Dense(2, activation='tanh'))
-    model_tf.add(layers_tf.Dense(1, activation="sigmoid"))
+    model_tf.add(layers_tf.Dense(1, activation='tanh'))
+    #model_tf.add(layers_tf.Dense(1, activation="sigmoid"))
 
     model_tf.summary()
 
+    metrics = tf.keras.metrics.BinaryAccuracy(name="binary_accuracy", dtype=None, threshold=0.0)
+    metrics2 = tf.keras.metrics.BinaryAccuracy(name="accuracy")
 
-    model_tf.compile(optimizer='adam',loss='MSE',metrics=['accuracy'])
+    model_tf.compile(optimizer='SGD',loss='MSE',metrics=[metrics, metrics2])
 
     history = model_tf.fit(train_data.tolist(), train_labels.tolist(), epochs=epochs,validation_data=(test_data.tolist(), test_labels.tolist()))
 
-    if show_accuracy :
+    if not show_accuracy :
         plt.plot(history.history['accuracy'], label='accuracy')
         plt.plot(history.history['val_accuracy'], label = 'test_accuracy')
         plt.xlabel('Epoch')
@@ -79,12 +81,9 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
         plt.legend(loc='lower right') 
         plt.savefig('Accuracy'+'.png')
 
-    predictions = model_tf.predict(test_data.tolist())
-    predictions =[1 if i >=0.5 else 0 for i in predictions]
-
     if show_points :
         predictions = model_tf.predict(test_data.tolist())
-        predictions =[1 if i >=0.5 else 0 for i in predictions]
+        predictions =[1 if i >=0.0 else 0 for i in predictions]
         plot_circle_with_predicted_labels(test_data,test_labels,predictions,tensorflow = True)
 
 

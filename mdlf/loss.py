@@ -14,11 +14,16 @@ class Loss(Module):
 
 
 class MSE(Loss):
+
+    def __init__(self):
+        self.input = None
+        self.label = None
+
     #TODO
     def forward(self, input, label): 
         self.input = input
         self.label = label
-        loss_mse = (0.5*(input - label) ** 2).mean()
+        loss_mse = (0.5*(input - label) ** 2)
         return loss_mse
         #raise NotImplementedError
 

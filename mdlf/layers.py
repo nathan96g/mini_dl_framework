@@ -17,11 +17,6 @@ class Identity(Layer):
         self.output_dim = input_dim
         self.input_dim = input_dim
         self.number_params = 0
-        self.weights = None
-        self.bias = None
-        self.input = None
-        self.weights_grad = None
-        self.bias_grad = None
 
     def forward(self, input):
         return input
@@ -32,13 +27,21 @@ class Identity(Layer):
     
     def initialize(self, input_dim):
         #if the first module is an identity layer -> input_dim is size of train_data (2)
-        if input_dim == -1 : 
-            # !!! Changer et mettre erreur !!!
-            self.input_dim = 2
-            self.output_dim = 2
-        else :
-            self.input_dim = input_dim
-            self.output_dim = input_dim
+        # Handle automatic dimension initialization
+        if input_dim == -1:
+            if self.input_dim == -1:
+                raise RuntimeError("This identity layer need a manual initialization "
+                                   "of the input dimension, e.g."
+                                   " Identity(input_dim=64)")
+        else:
+            if self.input_dim != -1 and input_dim != self.input_dim:
+                raise RuntimeError("The manually set input dimension ({}) of this layer"
+                                   " is different from the one inferred automatically ({})"
+                                   " by the initialization of the sequential model".format(self.input_dim, input_dim))
+            else:
+                self.input_dim = input_dim
+        
+        self.output_dim = self.input_dim
     
     def param(self): 
         return []
@@ -59,10 +62,10 @@ class Linear(Layer):
         self.weights_grad = None
         self.bias_grad = None
 
-# see if output needed
-# if we are in layer l:
-# input : x_{l-1} 
-# output : z_l
+    # see if output needed
+    # if we are in layer l:
+    # input : x_{l-1} 
+    # output : z_l
     def forward(self, input):
         self.input = input
         return self.weights.T @ input + self.bias
@@ -70,11 +73,10 @@ class Linear(Layer):
     def backward(self, *grad_wrt_output):
         #print("grad_wrt_output",grad_wrt_output)
         curr_delta = grad_wrt_output[0] #delta_l
-        self.weights_grad = self.input.unsqueeze(1) @ curr_delta.unsqueeze(0)
+        self.weights_grad = self.input.view(-1,1) @ curr_delta.view(1,-1)
         self.bias_grad = curr_delta     
-        prev_delta_partial = (self.weights @ curr_delta) # delta_{l-1} without componentwise activation mult
-        
-        return prev_delta_partial 
+        return (self.weights @ curr_delta) # delta_{l-1} without componentwise activation mult
+
 
     def param(self): 
         return [(self.weights, self.weights_grad), (self.bias, self.bias_grad)]
@@ -105,16 +107,15 @@ class Linear(Layer):
             else:
                 self.input_dim = input_dim
 
-        # Initialize weights and bias : TODO : initiate with correct uniform
-        self.weights = empty(self.input_dim, self.output_dim).uniform_(0, 1)
-        self.bias = empty(self.output_dim).fill_(0)
+        # Initialize weights and bias :
+        uniform_param = 1 / (self.input_dim**(1/2))
+        self.weights = empty(self.input_dim, self.output_dim).uniform_(-uniform_param, uniform_param)
+        self.bias = empty(self.output_dim).uniform_(-uniform_param, uniform_param)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
         
         # Initialize gradient weights and gradient bias :
-        self.weights_grad = empty((self.weights.shape))
-        self.weights_grad[:, :] = 0.0
-        self.bias_grad = empty((self.bias.shape))
-        self.bias_grad[:] = 0.0
+        self.weights_grad = empty((self.weights.shape)).fill_(0.0)
+        self.bias_grad = empty((self.bias.shape)).fill_(0.0)
 
     def __str__(self):
         return super().__str__() + ": Linear" 

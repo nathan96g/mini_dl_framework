@@ -1,3 +1,5 @@
+from mdlf.metrics import Accuracy
+import torch
 import mdlf.activations as activations
 import mdlf.layers as layers
 from torch import empty
@@ -12,6 +14,7 @@ class Sequential:
 
         self.layers_activations = None
         self.optimizer = None
+        self.metrics = None
 
     
     def add(self, module):
@@ -61,12 +64,12 @@ class Sequential:
 #modify also activation backward to get only 1 possible case
 
     def forward(self, input, label):
-        tmp = input    
+        tmp = input
         
         for module in self.modules:
             output = module.forward(tmp)
             tmp = output
-
+        
         outpout = self.loss.forward(tmp,label)
 
         return outpout
@@ -75,16 +78,14 @@ class Sequential:
         #TODO : implement reconstruct to modify modules
     def backward(self, input, label):
         output = self.forward(input,label)
-        last_activation = self.modules[-1]
 
-
-        delta = self.loss.backward(output, label) * last_activation.backward()  #check if transpose needed or @
-        for module in reversed(self.modules[:-1]): #get the second last layer (since -1 )
+        delta = self.loss.backward(output, label)
+        for module in reversed(self.modules):
             delta = module.backward(delta)
 
         return delta #useless normally
 
-    def train(self, train_data, train_label, epochs = 10, test_data = empty((0,0))  , test_label = empty((0,0))):
+    def train(self, train_data, train_label, epochs = 10, test_data = empty((0,0))  , test_label = empty((0,0)), verbal=True):
 
         loss_per_epoch_train = []
         accuracy_per_epoch_train  = []
@@ -95,7 +96,7 @@ class Sequential:
             loss_per_epoch_test = []
             accuracy_per_epoch_test  = []
 
-        for e in range(epochs) :
+        for i in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
             loss,accuracy,_ = self.loss_accuracy_function(train_data,train_label)
             loss_per_epoch_train.append(loss)
@@ -105,32 +106,34 @@ class Sequential:
                 loss,accuracy,_ = self.loss_accuracy_function(test_data,test_label)
                 loss_per_epoch_test.append(loss)
                 accuracy_per_epoch_test.append(accuracy)
+            
+            if verbal:
+                print("epochs number {} : Loss = {} and Accuracy = {}".format( i+1,loss ,accuracy ))
 
         if test_is_here : return loss_per_epoch_train, accuracy_per_epoch_train, loss_per_epoch_test, accuracy_per_epoch_test
         else : return loss_per_epoch_train, accuracy_per_epoch_train 
 
     def loss_accuracy_function(self,train_data,train_label):
-        loss = []
-        prediction = []
+        
         size = train_data.size(0)
+        prediction = torch.empty(size)
+        loss = torch.empty(size)
 
         for i in range (size):
-            loss.append(self.forward(train_data[i],train_label[i]))
-            prediction.append(self.loss.input) 
+            loss[i] = self.forward(train_data[i],train_label[i])
+            prediction[i] = self.loss.input
 
-        prediction =[1 if n >=0 else 0 for n in prediction]
-        result = [i1 - i2 for i1, i2 in zip(prediction, train_label.tolist())]
-        accuracy = 100 - result.count(0)/size * 100
-
-        return sum(loss), accuracy, prediction
+        accuracy = self.metrics(prediction, train_label)
+        return loss.mean(), accuracy, prediction
     
-    def fit(self,test_data,test_label):
+    def __call__(self,test_data,test_label):
         test_loss,test_accuracy, predicted_labels = self.loss_accuracy_function(test_data,test_label)
         return test_loss,test_accuracy,predicted_labels
 
-    def compile(self, optimizer, loss):
+    def compile(self, optimizer, loss, metrics=None):
         self.optimizer = optimizer
         self.loss = loss
+        self.metrics = metrics
         self.reconstruct_model()
 
         previous_output_dim = -1

@@ -26,32 +26,33 @@ class ReLU(Activation):
     #store z_l : z_l -> activation(z_l) -> x_l
     def forward(self, input):
         self.input = input 
-        return input.where(input >= 0, empty(input.shape).fill_(0))
+        return self.input.relu()
+        #return input.where(input >= 0, empty(input.shape).fill_(0))
     
     #compute activation_deriv(z_l)
-    #TODO : think if the delta{L+1} is computed componentwise !!! => if yes can greatly simplify
     def backward(self, *grad_wrt_output):
-        activ_eval = (self.input >= 0).to(self.input.dtype)        
-        if len(grad_wrt_output) == 0 :
-            return activ_eval
-        else :
-            return grad_wrt_output[0] * activ_eval
+        derivative = (self.input >= 0).to(self.input.dtype)        
+        return grad_wrt_output[0] * derivative
     
     def __str__(self):
         return super().__str__() + ": ReLU"
 
 class Tanh(Activation):
 
+    def __init__(self, dim=-1):
+        super().__init__(dim)
+        self.tanh = None # avoid recomputation in backward pass
+
     def forward(self, input):
         self.input = input
-        return input.tanh()
+        self.tanh = input.tanh()
+        return self.tanh
+        # e = (2*input).exp()
+        # return (e-1)/(e+1)
     
     def backward(self, *grad_wrt_output):
-        derivative_Tanh = (1 - (self.input.tanh() ** 2)).to(self.input.dtype)
-        if len(grad_wrt_output) == 0 :
-            return derivative_Tanh
-        else :
-            return grad_wrt_output[0] * derivative_Tanh
+        derivative_Tanh = (1 - self.tanh ** 2).to(self.input.dtype)
+        return grad_wrt_output[0] * derivative_Tanh
     
     def __str__(self):
         return super().__str__() +": Tanh"
@@ -62,10 +63,7 @@ class Identity(Activation):
         return input
     
     def backward(self, *grad_wrt_output):
-        if len(grad_wrt_output) == 0 :
-            return empty((self.input.size())).fill_(1) 
-        else :
-            return grad_wrt_output[0] * empty((grad_wrt_output[0].size())).fill_(1)
+        return grad_wrt_output[0] # * [1,1...,1] which is unnecessary
     
     def __str__(self):
         return super().__str__() + ": Identity"
