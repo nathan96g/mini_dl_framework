@@ -70,7 +70,11 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
 
     model_tf.compile(optimizer='SGD',loss='MSE',metrics=[metrics, metrics2])
 
-    history = model_tf.fit(train_data.tolist(), train_labels.tolist(), epochs=epochs,validation_data=(test_data.tolist(), test_labels.tolist()))
+    history = model_tf.fit(train_data.tolist(), 
+                           train_labels.tolist(), 
+                           epochs=epochs,
+                           validation_data=(test_data.tolist(), test_labels.tolist()),
+                           batch_size=1)
 
     if not show_accuracy :
         plt.plot(history.history['accuracy'], label='accuracy')

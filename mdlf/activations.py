@@ -57,6 +57,19 @@ class Tanh(Activation):
     def __str__(self):
         return super().__str__() +": Tanh"
 
+class Sigmoid(Activation):
+
+    def forward(self, input):
+        self.input = input
+        return input.sigmoid()
+    
+    def backward(self, *grad_wrt_output):
+        derivative = 1-self.input.sigmoid()
+        return grad_wrt_output[0] * derivative
+    
+    def __str__(self):
+        return super().__str__() +": Sigmoid"
+
 class Identity(Activation):
     def forward(self, input):
         self.input = input
