@@ -63,21 +63,19 @@ class Sequential:
 #modify subsequently backward by suppressing the last_activation and init delta to None
 #modify also activation backward to get only 1 possible case
 
-    def forward(self, input, label):
+    def forward(self,input):
         tmp = input
         
         for module in self.modules:
             output = module.forward(tmp)
             tmp = output
-        
-        outpout = self.loss.forward(tmp,label)
 
-        return outpout
+        return output
     
         #simple case : when begin with layer, alternate with activations / layers, and ends with an activation
         #TODO : implement reconstruct to modify modules
     def backward(self, input, label):
-        output = self.forward(input,label)
+        output = self.forward(input)
 
         delta = self.loss.backward(output, label)
         for module in reversed(self.modules):
@@ -116,15 +114,15 @@ class Sequential:
     def loss_accuracy_function(self,train_data,train_label):
         
         size = train_data.size(0)
-        prediction = torch.empty(size)
+        output = torch.empty(size)
         loss = torch.empty(size)
 
         for i in range (size):
-            loss[i] = self.forward(train_data[i],train_label[i])
-            prediction[i] = self.loss.input
+            output[i] = self.forward(train_data[i])
+            loss[i] = self.loss.forward(output[i],train_label[i])
 
-        accuracy = self.metrics(prediction, train_label)
-        return loss.mean(), accuracy, prediction
+        accuracy = self.metrics(output, train_label)
+        return loss.mean(), accuracy, output
     
     def __call__(self,test_data,test_label):
         test_loss,test_accuracy, predicted_labels = self.loss_accuracy_function(test_data,test_label)

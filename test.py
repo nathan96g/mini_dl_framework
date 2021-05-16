@@ -37,14 +37,14 @@ model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=1))
 model.add(activations.Sigmoid())
 
-model.compile(optimizer=optimizer.SGD(), 
+model.compile(optimizer=optimizer.SGD(lambda_ = 0.01), 
               loss=loss.MSE(), 
               metrics=metrics.BinaryAccuracy(threshold=0.5))
 
 print(model)
 
 #two way to call function train -> input only train or train + test
-train_loss_per_epochs, train_accuracy_per_epochs = model.train(train_data, train_label, epochs=10)
+train_loss_per_epochs, train_accuracy_per_epochs = model.train(train_data, train_label, epochs=100)
 #train_loss_per_epochs, train_accuracy_per_epochs, test_loss_per_epochs, test_accuracy_per_epochs = model.train(train_data, train_label,epochs = 10, test_data =test_data, test_label= test_label)
 
 #fit function 

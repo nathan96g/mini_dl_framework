@@ -60,15 +60,15 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
     model_tf.add(layers_tf.Dense(25, activation='relu'))
     model_tf.add(layers_tf.Dense(25, activation='relu'))
     model_tf.add(layers_tf.Dense(25, activation='relu'))
-    model_tf.add(layers_tf.Dense(1, activation='tanh'))
-    #model_tf.add(layers_tf.Dense(1, activation="sigmoid"))
+    # model_tf.add(layers_tf.Dense(1, activation='tanh'))
+    model_tf.add(layers_tf.Dense(1, activation="sigmoid"))
 
     model_tf.summary()
 
-    metrics = tf.keras.metrics.BinaryAccuracy(name="binary_accuracy", dtype=None, threshold=0.0)
+    metrics = tf.keras.metrics.BinaryAccuracy(name="binary_accuracy", dtype=None, threshold=0.5)
     metrics2 = tf.keras.metrics.BinaryAccuracy(name="accuracy")
 
-    model_tf.compile(optimizer='SGD',loss='MSE',metrics=[metrics, metrics2])
+    model_tf.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.1),loss='MSE',metrics=[metrics, metrics2])
 
     history = model_tf.fit(train_data.tolist(), 
                            train_labels.tolist(), 
@@ -87,7 +87,7 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
 
     if show_points :
         predictions = model_tf.predict(test_data.tolist())
-        predictions =[1 if i >=0.0 else 0 for i in predictions]
+        predictions =[1 if i >=0.5 else 0 for i in predictions]
         plot_circle_with_predicted_labels(test_data,test_labels,predictions,tensorflow = True)
 
 
