@@ -35,7 +35,7 @@ model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=25))
 model.add(activations.ReLU())
 model.add(layers.Linear(number_nodes=1))
-model.add(activations.Sigmoid())
+model.add(activations.Tanh())
 
 model.compile(optimizer=optimizer.SGD(), 
               loss=loss.MSE(), 
@@ -44,18 +44,22 @@ model.compile(optimizer=optimizer.SGD(),
 print(model)
 
 #two way to call function train -> input only train or train + test
-train_loss_per_epochs, train_accuracy_per_epochs = model.train(train_data, train_label, epochs=10)
+train_loss_per_epochs, train_accuracy_per_epochs,predicted_labels_per_epoch_train = model.train(train_data, train_label, epochs=100)
 #train_loss_per_epochs, train_accuracy_per_epochs, test_loss_per_epochs, test_accuracy_per_epochs = model.train(train_data, train_label,epochs = 10, test_data =test_data, test_label= test_label)
 
 #fit function 
-test_loss,test_accuracy,predicted_labels = model(test_data,test_label)
+#test_loss,test_accuracy,predicted_labels = model(test_data,test_label)
 
 #Plot result of Mini DL framework
 #utils.plot_circle_with_predicted_labels(test_data, test_label, predicted_label=predicted_labels)
 
 
+utils.plot_result(train_label, predicted_labels_per_epoch_train)
+
+"""
 #Apply tensorflow neural network on data
 m = utils.call_NN_tensorflow( train_data, train_label, test_data, test_label,
                 epochs= 10, 
                 show_accuracy = True,
                 show_points = True)
+"""

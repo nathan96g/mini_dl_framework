@@ -89,6 +89,7 @@ class Sequential:
 
         loss_per_epoch_train = []
         accuracy_per_epoch_train  = []
+        predicted_labels_per_epoch_train = [] 
         test_is_here = False
 
         if test_data.size() != (0,0) and test_label.size() != (0,0) :  
@@ -98,7 +99,8 @@ class Sequential:
 
         for i in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
-            loss,accuracy,_ = self.loss_accuracy_function(train_data,train_label)
+            loss,accuracy,predicted_labels = self.loss_accuracy_function(train_data,train_label)
+            predicted_labels_per_epoch_train.append(predicted_labels)
             loss_per_epoch_train.append(loss)
             accuracy_per_epoch_train.append(accuracy)
 
@@ -111,7 +113,7 @@ class Sequential:
                 print("epochs number {} : Loss = {} and Accuracy = {}".format( i+1,loss ,accuracy ))
 
         if test_is_here : return loss_per_epoch_train, accuracy_per_epoch_train, loss_per_epoch_test, accuracy_per_epoch_test
-        else : return loss_per_epoch_train, accuracy_per_epoch_train 
+        else : return loss_per_epoch_train, accuracy_per_epoch_train, predicted_labels_per_epoch_train
 
     def loss_accuracy_function(self,train_data,train_label):
         

@@ -1,6 +1,8 @@
 ################################################
 import math
 from torch import empty
+import pandas as pd
+import seaborn as sns
 import tensorflow as tf
 import torch
 import matplotlib.pyplot as plt
@@ -40,20 +42,20 @@ def plot_circle_with_predicted_labels (data, label, predicted_label=-1, tensorfl
     
     if type(predicted_label) != int and tensorflow == True :
             ax.set_title('TensorFlow \n Predicted values for test set \n  Accuracy = {}'.format(Accuracy), fontsize = 20, fontweight='bold',pad=5)
-            fig.savefig('Predicted_values'+'.png')
+            fig.savefig('Figure/Predicted_values_tensorflow'+'.png')
     elif type(predicted_label) != int and tensorflow == False :
             ax.set_title('Mini DL framework \n Predicted values for test set \n  Accuracy = {}'.format(Accuracy), fontsize = 20, fontweight='bold',pad=5)
-            fig.savefig('Predicted_values'+'.png')
+            fig.savefig('Figure/Predicted_values_framework'+'.png')
     else : 
             ax.set_title('Training set', fontsize = 25, fontweight='bold',pad=20)
-            fig.savefig('Training_set'+'.png')  
+            fig.savefig('Figure/Training_set'+'.png')  
 
 ################################################ 
 
 def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
                     epochs = 10,
-                    show_accuracy = True,
-                    show_points = True):
+                    show_accuracy = False,
+                    show_points = False):
                             
     model_tf = models_tf.Sequential()
     model_tf.add(tf.keras.Input(shape=(train_data.size(1),)))
@@ -76,14 +78,14 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
                            validation_data=(test_data.tolist(), test_labels.tolist()),
                            batch_size=1)
 
-    if not show_accuracy :
+    if show_accuracy :
         plt.plot(history.history['accuracy'], label='accuracy')
         plt.plot(history.history['val_accuracy'], label = 'test_accuracy')
         plt.xlabel('Epoch')
         plt.ylabel('Accuracy')
         plt.ylim([0.5, 1])
         plt.legend(loc='lower right') 
-        plt.savefig('Accuracy'+'.png')
+        plt.savefig('Figure/Accuracy'+'.png')
 
     if show_points :
         predictions = model_tf.predict(test_data.tolist())
@@ -92,4 +94,47 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
 
 
 
+################################################
 
+def plot_result(label, predictions_per_epochs):
+
+    #création de epoch_step qui est une liste des epochs qu'on va afficher 
+    length = len(predictions_per_epochs)
+    epoch_step = []
+    step = round(length/5)
+    for i in range(0, length, step):
+        epoch_step.append(i)
+    epoch_step.append(length-1)
+    
+    #création des trois columns 
+    #list de tous les labels 
+    final_label = []
+    #list de tous les données à la suite 
+    final_data = []
+    #list du nombre d'epochs 
+    final_epochs = []
+
+    # concatenation des résultats des epochs intéréssés avec predictions_per_epochs[i]
+    for i in epoch_step : 
+        final_data= final_data + predictions_per_epochs[i].tolist() 
+        final_label = final_label + label.tolist()
+        #indication de quel epochs on est en train de parler 
+        final_epochs = final_epochs + [i+1] * len(label) 
+    
+    
+    #création d'un data frame avec trois columns pour etre utiliser par striplot 
+    df = pd.DataFrame(list(zip(final_data, final_label)),
+               columns =['Prediction from the NN', 'label'])
+
+    df['number of epochs'] = final_epochs
+
+    sns.stripplot(y='Prediction from the NN', x='number of epochs', 
+                   data=df, 
+                   jitter=True,
+                   dodge=True,
+                   marker='o', 
+                   alpha=0.5,
+                   hue='label')
+
+    plt.savefig('Figure/plot_prediction_per_epochs.png')
+    
