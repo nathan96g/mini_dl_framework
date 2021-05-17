@@ -16,6 +16,8 @@ class Sequential:
         self.optimizer = None
         self.metrics = None
 
+        self.param_test = []
+
     
     def add(self, module):
         self.modules.append(module)
@@ -123,7 +125,7 @@ class Sequential:
             loss[i] = self.loss.forward(output[i],train_label[i])
 
         accuracy = self.metrics(output, train_label)
-        return loss.mean(), accuracy, output
+        return loss.sum(), accuracy, output
     
     def __call__(self,test_data,test_label):
         test_loss,test_accuracy, predicted_labels = self.loss_accuracy_function(test_data,test_label)
@@ -138,6 +140,9 @@ class Sequential:
         previous_output_dim = -1
         for module in self.modules:
             module.initialize(input_dim = previous_output_dim)
+            if issubclass(type(module),layers.Layer) :
+                par = module.param()
+                self.param_test.append((torch.clone(par[0][0]), torch.clone(par[1][0])))
             previous_output_dim = module.output_dim
             self.number_params += module.number_params
         

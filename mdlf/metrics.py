@@ -23,8 +23,8 @@ class test_3 :
         nb_test_errors = 0
         for n in range(target.size(0)):
             pred = output[n].max(0)[1].item()
-            print("pred2:",pred)
-            print(target[n])
-            print(output)
+            # print("pred2:",pred)
+            # print(target[n])
+            # print(output)
             if target[n, pred] < 0.5: nb_test_errors = nb_test_errors + 1
         return (100.0 *nb_test_errors / target.size(0))

@@ -116,30 +116,7 @@ class Linear(Layer):
         # Initialize weights and bias :
         uniform_param = 1 / (self.input_dim**(1/2))
         self.weights = empty(self.input_dim, self.output_dim).uniform_(-uniform_param, uniform_param).T #!!! T
-        # print(self.weights.shape)
-        # print(self.weights[0: 3])
-        # if self.input_dim == 5 :
-        #     self.weights = torch.tensor([[ 0.3419,  0.3712, -0.1048,  0.4108, -0.0980],
-        # [ 0.0902, -0.2177,  0.2626,  0.3942, -0.3281],
-        # [ 0.3887,  0.0837,  0.3304,  0.0606,  0.2156],
-        # [-0.0631,  0.3448,  0.0661, -0.2088,  0.1140],
-        # [-0.2060, -0.0524, -0.1816,  0.2967, -0.3530],
-        # [-0.2062, -0.1263, -0.2689,  0.0422, -0.4417],
-        # [ 0.4039, -0.3799,  0.3453,  0.0744, -0.1452],
-        # [ 0.2764,  0.0697,  0.3613,  0.0489, -0.1410]])
-        # else : 
-        #     self.weights = torch.tensor([[ 0.0950, -0.0959,  0.1488,  0.3157,  0.2044, -0.1546,  0.2041,  0.0633],
-        # [ 0.1795, -0.2155, -0.3500, -0.1366, -0.2712,  0.2901,  0.1018,  0.1464],
-        # [ 0.1118, -0.0062,  0.2767, -0.2512,  0.0223, -0.2413,  0.1090, -0.1218],
-        # [ 0.1083, -0.0737,  0.2932, -0.2096, -0.2109, -0.2109,  0.3180,  0.1178],
-        # [ 0.3402, -0.2918, -0.3507, -0.2766, -0.2378,  0.1432,  0.1266,  0.2938],
-        # [-0.1826, -0.2410,  0.1876, -0.1429,  0.2146, -0.0839,  0.2022, -0.2747],
-        # [-0.1784,  0.1078,  0.0747, -0.0901,  0.2107,  0.2403, -0.2564, -0.1888],
-        # [ 0.3237, -0.1193, -0.1253, -0.3421, -0.2025,  0.0883, -0.0467, -0.2566],
-        # [ 0.0083, -0.2415, -0.3000, -0.1947, -0.3094, -0.2251,  0.3534,  0.0668],
-        # [ 0.1090, -0.3298, -0.2322, -0.1177,  0.0553, -0.3111, -0.1523, -0.2117]])
-        # print(self.weights.shape)
-        # print(self.weights)
+        
         
         self.bias = empty(self.output_dim).fill_(0.0)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
@@ -147,6 +124,8 @@ class Linear(Layer):
         # Initialize gradient weights and gradient bias :
         self.weights_grad = empty((self.weights.shape)).fill_(0.0)
         self.bias_grad = empty((self.bias.shape)).fill_(0.0)
+
+
 
     def __str__(self):
         return super().__str__() + ": Linear" 
