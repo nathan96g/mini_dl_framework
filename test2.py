@@ -30,7 +30,7 @@ def sigma(x):
 def dsigma(x):
     return 4 * (x.exp() + x.mul(-1).exp()).pow(-2)
 ######################################################################
-def tloss(v, t):
+def loss_(v, t):
     return (v - t).pow(2).sum()
 def dloss(v, t):
     return 2 * (v - t)
@@ -74,14 +74,14 @@ zeta = 0.90
 train_target = train_target * zeta
 test_target = test_target * zeta
 
-nb_train_samples = train_input.size(0) #can modify
+nb_train_samples = 1#train_input.size(0) #can modify
 
 
 nb_hidden = 8
 eta = 1e-1 / nb_train_samples
 epsilon = 1e-6
 
-feature_sizes = 700 #can modify (up to 750 et des poussieres)
+feature_sizes = 10 #can modify (up to 750 et des poussieres)
 num_epoch = 1
 
 ####################################################################
@@ -142,7 +142,7 @@ for _ in range(num_epoch):
         # print(train_target[n])
         # print(x2)
         if train_target[n, pred] < 0.5: nb_train_errors = nb_train_errors + 1
-        acc_loss = acc_loss + tloss(x2, train_target[n])
+        acc_loss = acc_loss + loss_(x2, train_target[n])
         backward_pass(w1, b1, w2, b2,
                       train_target[n],
                       x0, s1, x1, s2, x2,
