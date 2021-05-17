@@ -76,12 +76,14 @@ class Sequential:
         #TODO : implement reconstruct to modify modules
     def backward(self, input, label):
         output = self.forward(input)
-
+        # print("back2")
         delta = self.loss.backward(output, label)
         for module in reversed(self.modules):
+            # print(delta)
             delta = module.backward(delta)
-
+        # print("backend2")
         return delta #useless normally
+
 
     def train(self, train_data, train_label, epochs = 10, test_data = empty((0,0))  , test_label = empty((0,0)), verbal=True):
 
@@ -111,13 +113,12 @@ class Sequential:
         if test_is_here : return loss_per_epoch_train, accuracy_per_epoch_train, loss_per_epoch_test, accuracy_per_epoch_test
         else : return loss_per_epoch_train, accuracy_per_epoch_train 
 
-    def loss_accuracy_function(self,train_data,train_label):
-        
-        size = train_data.size(0)
-        output = torch.empty(size)
-        loss = torch.empty(size)
 
-        for i in range (size):
+    def loss_accuracy_function(self,train_data,train_label):
+        size_ = train_label.shape
+        output = torch.empty(size_)
+        loss = torch.empty(size_)
+        for i in range(size_[0]):
             output[i] = self.forward(train_data[i])
             loss[i] = self.loss.forward(output[i],train_label[i])
 

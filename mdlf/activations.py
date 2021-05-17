@@ -46,12 +46,13 @@ class Tanh(Activation):
     def forward(self, input):
         self.input = input
         self.tanh = input.tanh()
+        # print(self.tanh)
         return self.tanh
         # e = (2*input).exp()
         # return (e-1)/(e+1)
     
     def backward(self, *grad_wrt_output):
-        derivative_Tanh = (1 - self.tanh ** 2).to(self.input.dtype)
+        derivative_Tanh = (4 * (self.tanh.exp() + self.tanh.mul(-1).exp()).pow(-2)).to(self.input.dtype)
         return grad_wrt_output[0] * derivative_Tanh
     
     def __str__(self):

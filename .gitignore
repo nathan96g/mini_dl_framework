@@ -1,7 +1,7 @@
 # ignore py-cache
 *.pyc
 
-
+data/*
 ### macOS ###
 # General
 .DS_Store
