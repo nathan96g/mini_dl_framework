@@ -41,7 +41,7 @@ def forward_pass(w1, b1, w2, b2, x):
     x1 = sigma(s1)
     s2 = w2.mv(x1) + b2
     x2 = sigma(s2)
-    # print(x2)
+
     return x0, s1, x1, s2, x2
 
 def backward_pass(w1, b1, w2, b2,
@@ -78,7 +78,7 @@ nb_train_samples = 1#train_input.size(0) #can modify
 
 
 nb_hidden = 8
-eta = 1e-1 / nb_train_samples
+eta = 1.5/ nb_train_samples
 epsilon = 1e-6
 
 feature_sizes = 10 #can modify (up to 750 et des poussieres)
@@ -140,7 +140,8 @@ for _ in range(num_epoch):
         pred = x2.max(0)[1].item()
         # print("pred1:",pred)
         # print(train_target[n])
-        # print(x2)
+
+        print("output_test1:",x2)
         if train_target[n, pred] < 0.5: nb_train_errors = nb_train_errors + 1
         acc_loss = acc_loss + loss_(x2, train_target[n])
         backward_pass(w1, b1, w2, b2,
@@ -149,14 +150,15 @@ for _ in range(num_epoch):
                       dl_dw1, dl_db1, dl_dw2, dl_db2)
         # Gradient step
         w1 = w1 - eta * dl_dw1
-        
+        print("w1_1:",w1)
         b1 = b1 - eta * dl_db1
         # print("qqq")
-        # print(b1)
+        print("b1_1:",b1)
+        print()
         w2 = w2 - eta * dl_dw2
         b2 = b2 - eta * dl_db2
-        # print("qqq")
-        # print(b2)
+        print("w2_1:",w2)
+        print("b2_1:",b2)
         # print("qqq")
 
     print(' acc_train_loss {:.02f} acc_train_error {:.02f}%'

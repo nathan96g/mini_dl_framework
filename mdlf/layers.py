@@ -88,9 +88,11 @@ class Linear(Layer):
 
         self.weights = new_weights[0]
 
-
+        print("w:",self.weights)
         # print("new_bias",new_weights[1])
         self.bias = new_weights[1]
+        print("b:",self.bias)
+        print()
 
 
     def gradient_to_zero(self):
