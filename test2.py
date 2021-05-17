@@ -78,7 +78,7 @@ nb_train_samples = 1#train_input.size(0) #can modify
 
 
 nb_hidden = 8
-eta = 1.5/ nb_train_samples
+eta = 1e-1 / nb_train_samples
 epsilon = 1e-6
 
 feature_sizes = 10 #can modify (up to 750 et des poussieres)
@@ -160,7 +160,7 @@ for _ in range(num_epoch):
         print("w2_1:",w2)
         print("b2_1:",b2)
         # print("qqq")
-
+    print()
     print(' acc_train_loss {:.02f} acc_train_error {:.02f}%'
       .format(acc_loss,
               (100 * nb_train_errors) / nb_train_samples))
