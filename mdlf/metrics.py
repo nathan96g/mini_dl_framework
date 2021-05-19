@@ -1,8 +1,15 @@
-class Accuracy:
+class Metric:
+    def __str__(self):
+        return "Metric"
+
+class Accuracy(Metric):
     def __call__(self, predicted, target):
         return (predicted == target).to(predicted.dtype).mean()
 
-class BinaryAccuracy:
+    def __str__(self):
+        return super().__str__() + ": Accuracy"
+
+class BinaryAccuracy(Metric):
     def __init__(self, threshold=0.5):
         self.threshold = threshold
 
@@ -10,7 +17,10 @@ class BinaryAccuracy:
         pred = (predicted >= self.threshold)
         return (pred == target).to(predicted.dtype).mean()
 
-class BinaryAccuracyTest:
+    def __str__(self):
+        return super().__str__() + ": Binary Accuracy"
+
+class BinaryAccuracyTest(Metric):
     def __init__(self, threshold=0.5):
         self.threshold = threshold
 
@@ -18,7 +28,7 @@ class BinaryAccuracyTest:
         pred = ((predicted+1)/2 >= self.threshold)
         return (pred == target).to(predicted.dtype).mean()
 
-class test_3 :
+class test_3(Metric):
     def __call__(self, output, target):
         nb_test_errors = 0
         for n in range(target.size(0)):

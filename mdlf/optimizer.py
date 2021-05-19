@@ -6,6 +6,9 @@ class Optimizer:
     def step(self, model, train_data, train_label):
         return NotImplementedError
 
+    def __str__(self):
+        return "Optimizer"
+
 
 class SGD(Optimizer):
     def __init__(self, lambda_ = 0.01):
@@ -30,6 +33,9 @@ class SGD(Optimizer):
                        updates.append(weight - self.lambda_ * weight_grad)
                 module.update(updates)
         return model
+
+    def __str__(self):
+        return super().__str__() + ": SGD"
 
 #TODO : see if time to implement => require to store list of grad in modules and not just grad
 class Minibatch_SGD(Optimizer):
