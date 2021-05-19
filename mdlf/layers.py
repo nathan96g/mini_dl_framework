@@ -25,7 +25,7 @@ class Identity(Layer):
     
     def backward(self, grad_wrt_output):
         return grad_wrt_output
-        #raise NotImplementedError('backward')
+
     
     def initialize(self, input_dim):
         #if the first module is an identity layer -> input_dim is size of train_data (2)
@@ -74,7 +74,6 @@ class Linear(Layer):
         return self.weights @ input + self.bias #!!! no .T
     
     def backward(self, *grad_wrt_output):
-        #print("grad_wrt_output",grad_wrt_output)
         curr_delta = grad_wrt_output[0] #delta_l
         self.weights_grad = curr_delta.view(-1, 1).mm(self.input.view(1, -1))
         self.bias_grad = curr_delta     
@@ -85,14 +84,9 @@ class Linear(Layer):
         return [(self.weights, self.weights_grad), (self.bias, self.bias_grad)]
 
     def update(self, new_weights):
+        self.weights = new_weights[0]
+        self.bias = new_weights[1]
 
-        self.weights = new_weights[0].clone()
-
-        # print("w:",self.weights)
-        # print("new_bias",new_weights[1])
-        self.bias = new_weights[1].clone()
-        # print("b:",self.bias)
-        # print()
 
 
     def gradient_to_zero(self):

@@ -78,12 +78,11 @@ class Sequential:
         #TODO : implement reconstruct to modify modules
     def backward(self, input, label):
         output = self.forward(input)
-        # print("back2")
+
         delta = self.loss.backward(output, label)
         for module in reversed(self.modules):
-            # print(delta)
             delta = module.backward(delta)
-        # print("backend2")
+
         return delta #useless normally
 
 
@@ -145,10 +144,6 @@ class Sequential:
                 self.param_test.append((torch.clone(par[0][0]), torch.clone(par[1][0])))
             previous_output_dim = module.output_dim
             self.number_params += module.number_params
-        
-        #add loss module at the end of modules 
-        #self.modules.append(loss)
-
         return
     
     def grad_zero(self):
