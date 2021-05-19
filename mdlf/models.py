@@ -88,47 +88,77 @@ class Sequential:
 
     def train(self, train_data, train_label, epochs = 10, test_data = empty((0,0))  , test_label = empty((0,0)), verbal=True):
 
-        loss_per_epoch_train = []
-        accuracy_per_epoch_train  = []
+        losses_train = [] # per epoch
+        accuracies_train  = [] # per epoch
         test_is_here = False
 
+        # Check if the test is given
         if test_data.size() != (0,0) and test_label.size() != (0,0) :  
             test_is_here =  True 
-            loss_per_epoch_test = []
-            accuracy_per_epoch_test  = []
+            losses_test = [] # per epoch
+            accuracies_test  = [] # per epoch
 
         for i in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
-            loss,accuracy,_ = self.loss_accuracy_function(train_data,train_label)
-            loss_per_epoch_train.append(loss)
-            accuracy_per_epoch_train.append(accuracy)
+            _, loss,accuracy = self(train_data,train_label)
+            losses_train.append(loss)
+            accuracies_train.append(accuracy)
 
             if test_is_here :
-                loss,accuracy,_ = self.loss_accuracy_function(test_data,test_label)
-                loss_per_epoch_test.append(loss)
-                accuracy_per_epoch_test.append(accuracy)
+                _, loss,accuracy = self(test_data,test_label)
+                losses_test.append(loss)
+                accuracies_test.append(accuracy)
             
-            if verbal:
-                print("epochs number {} : Loss = {} and Accuracy = {}".format( i+1,loss ,accuracy ))
+            # Print accuracy and loss per epoch
+            if verbal :
+                if test_is_here:
+                    print("epochs number {} : train loss = {}, train accuracy = {}, test loss = {}, test accuracy = {}"
+                                .format( i+1,losses_train[-1] , accuracies_train[-1], losses_test[-1] , accuracies_test[-1]))
+                else:
+                    print("epochs number {} : train loss = {}, train accuracy = {}"
+                                .format( i+1,losses_train[-1] , accuracies_train[-1]))
 
-        if test_is_here : return loss_per_epoch_train, accuracy_per_epoch_train, loss_per_epoch_test, accuracy_per_epoch_test
-        else : return loss_per_epoch_train, accuracy_per_epoch_train 
+        if test_is_here : 
+            return losses_train, accuracies_train, losses_test, accuracies_test
+        else : 
+            return losses_train, accuracies_train
 
 
-    def loss_accuracy_function(self,train_data,train_label):
-        size_ = train_label.shape
-        output = torch.empty(size_)
+    def __call__(self, data, label=None):
+        """
+        If label is None, only return the prediction for data.
+        Return the loss and the accuracy for the label predicted by
+        this model (self) w.r.t. the associated labels
+        """
+        # If we only want predictions
+        if label == None:
+
+            size_ = data.shape
+            # Check if we give a dataset or a single sample
+            if self.modules[0].input_dim == size_:
+                return self.forward(data)
+
+            output = torch.empty(size_[0])
+            for i in range(size_[0]):
+                output[i] = self.forward(data[i])
+            return output
+
+        size_ = label.shape
+
         loss = torch.empty(size_)
-        for i in range(size_[0]):
-            output[i] = self.forward(train_data[i])
-            loss[i] = self.loss.forward(output[i],train_label[i])
+        output = torch.empty(size_)
 
-        accuracy = self.metrics(output, train_label)
-        return loss.sum(), accuracy, output
-    
-    def __call__(self,test_data,test_label):
-        test_loss,test_accuracy, predicted_labels = self.loss_accuracy_function(test_data,test_label)
-        return test_loss,test_accuracy,predicted_labels
+        # Handle the case where data is only one sample
+        if size_[0] == 1:
+            data = data.view(1,-1)
+        
+        for i in range(size_[0]):
+            output[i] = self.forward(data[i])
+            loss[i]   = self.loss.forward(output[i],label[i])
+
+        accuracy = self.metrics(output, label)
+        return output, loss.sum(), accuracy
+
 
     def compile(self, optimizer, loss, metrics=None):
         self.optimizer = optimizer
@@ -147,6 +177,9 @@ class Sequential:
         return
     
     def grad_zero(self):
+        """
+        Set all the gradient of all modules to zero
+        """
         for module in self.modules:
             if issubclass(type(module),layers.Linear):
                 module.gradient_to_zero()

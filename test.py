@@ -44,11 +44,11 @@ model.compile(optimizer=optimizer.SGD(lambda_ = 0.01),
 print(model)
 
 #two way to call function train -> input only train or train + test
-train_loss_per_epochs, train_accuracy_per_epochs = model.train(train_data, train_label, epochs=100)
-#train_loss_per_epochs, train_accuracy_per_epochs, test_loss_per_epochs, test_accuracy_per_epochs = model.train(train_data, train_label,epochs = 10, test_data =test_data, test_label= test_label)
+train_loss_per_epochs, train_accuracy_per_epochs = model.train(train_data, train_label, epochs=10)
+train_loss_per_epochs, train_accuracy_per_epochs, test_loss_per_epochs, test_accuracy_per_epochs = model.train(train_data, train_label,epochs = 10, test_data =test_data, test_label= test_label)
 
-#fit function 
-test_loss,test_accuracy,predicted_labels = model(test_data,test_label)
+#call function 
+predicted_labels, test_loss,test_accuracy = model(test_data,test_label)
 
 #Plot result of Mini DL framework
 #utils.plot_circle_with_predicted_labels(test_data, test_label, predicted_label=predicted_labels)

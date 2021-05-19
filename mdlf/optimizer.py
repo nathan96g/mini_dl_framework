@@ -6,7 +6,7 @@ class Optimizer:
     def step(self, model, train_data, train_label):
         return NotImplementedError
 
-#TODO: determine get a good lambda_
+
 class SGD(Optimizer):
     def __init__(self, lambda_ = 0.01):
         self.lambda_ = lambda_
