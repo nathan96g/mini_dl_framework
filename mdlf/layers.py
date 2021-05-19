@@ -113,7 +113,6 @@ class Linear(Layer):
         uniform_param = 1 / (self.input_dim**(1/2))
         self.weights = empty(self.input_dim, self.output_dim).uniform_(-uniform_param, uniform_param).T #!!! T
         
-        
         self.bias = empty(self.output_dim).fill_(0.0)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
         

@@ -23,7 +23,6 @@ class SGD(Optimizer):
 
             # set gradient to zero 
             model.grad_zero()
-            
             model.backward(train_sample, train_sample_label)
             for module in model.modules :
                 updates = []

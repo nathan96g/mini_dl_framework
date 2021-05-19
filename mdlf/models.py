@@ -88,21 +88,23 @@ class Sequential:
 
     def train(self, train_data, train_label, epochs = 10, test_data = empty((0,0))  , test_label = empty((0,0)), verbal=True):
 
-        losses_train = [] # per epoch
+        losses_train = []      # per epoch
         accuracies_train  = [] # per epoch
+        predictions = []       # per epoch
         test_is_here = False
 
         # Check if the test is given
         if test_data.size() != (0,0) and test_label.size() != (0,0) :  
             test_is_here =  True 
-            losses_test = [] # per epoch
+            losses_test = []      # per epoch
             accuracies_test  = [] # per epoch
 
         for i in range(epochs) :
             self.optimizer.step(self, train_data, train_label)
-            _, loss,accuracy = self(train_data,train_label)
+            pred, loss,accuracy = self(train_data,train_label)
             losses_train.append(loss)
             accuracies_train.append(accuracy)
+            predictions.append(pred)
 
             if test_is_here :
                 _, loss,accuracy = self(test_data,test_label)
@@ -119,9 +121,9 @@ class Sequential:
                                 .format( i+1,losses_train[-1] , accuracies_train[-1]))
 
         if test_is_here : 
-            return losses_train, accuracies_train, losses_test, accuracies_test
+            return predictions, losses_train, accuracies_train, losses_test, accuracies_test
         else : 
-            return losses_train, accuracies_train
+            return predictions, losses_train, accuracies_train
 
 
     def __call__(self, data, label=None):
