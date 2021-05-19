@@ -86,13 +86,13 @@ class Linear(Layer):
 
     def update(self, new_weights):
 
-        self.weights = new_weights[0]
+        self.weights = new_weights[0].clone()
 
-        print("w:",self.weights)
+        # print("w:",self.weights)
         # print("new_bias",new_weights[1])
-        self.bias = new_weights[1]
-        print("b:",self.bias)
-        print()
+        self.bias = new_weights[1].clone()
+        # print("b:",self.bias)
+        # print()
 
 
     def gradient_to_zero(self):

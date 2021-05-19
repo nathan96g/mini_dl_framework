@@ -74,15 +74,15 @@ zeta = 0.90
 train_target = train_target * zeta
 test_target = test_target * zeta
 
-nb_train_samples = 1#train_input.size(0) #can modify
+nb_train_samples = 50 #can modify
 
 
 nb_hidden = 8
 eta = 1e-1 / nb_train_samples
 epsilon = 1e-6
 
-feature_sizes = 10 #can modify (up to 750 et des poussieres)
-num_epoch = 1
+feature_sizes = 700 #can modify (up to 750 et des poussieres)
+num_epoch = 10
 
 ####################################################################
 
@@ -123,7 +123,7 @@ dl_db1 = torch.empty(b1.size())
 dl_dw2 = torch.empty(w2.size())
 dl_db2 = torch.empty(b2.size())
 
-print()
+print("Other Model")
 
 
 for _ in range(num_epoch):
@@ -141,7 +141,7 @@ for _ in range(num_epoch):
         # print("pred1:",pred)
         # print(train_target[n])
 
-        print("output_test1:",x2)
+        # print(train_target[n].argmax())
         if train_target[n, pred] < 0.5: nb_train_errors = nb_train_errors + 1
         acc_loss = acc_loss + loss_(x2, train_target[n])
         backward_pass(w1, b1, w2, b2,
@@ -150,15 +150,15 @@ for _ in range(num_epoch):
                       dl_dw1, dl_db1, dl_dw2, dl_db2)
         # Gradient step
         w1 = w1 - eta * dl_dw1
-        print("w1_1:",w1)
+        # print("w1_1:",w1)
         b1 = b1 - eta * dl_db1
         # print("qqq")
-        print("b1_1:",b1)
-        print()
+        # print("b1_1:",b1)
+        # print()
         w2 = w2 - eta * dl_dw2
         b2 = b2 - eta * dl_db2
-        print("w2_1:",w2)
-        print("b2_1:",b2)
+        # print("w2_1:",w2)
+        # print("b2_1:",b2)
         # print("qqq")
     print()
     print(' acc_train_loss {:.02f} acc_train_error {:.02f}%'

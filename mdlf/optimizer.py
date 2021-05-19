@@ -21,6 +21,7 @@ class SGD(Optimizer):
         for n in random_int :
             train_sample= train_data[n]
             train_sample_label= train_label[n]
+            # print(train_sample_label.argmax())
             
             # set gradient to zero 
             model.grad_zero()
@@ -34,9 +35,10 @@ class SGD(Optimizer):
                     #        print("icic")
                     #        print(weight)
                        weight_grad = param[1]
-                       updates.append(weight - self.lambda_ * weight_grad)
+                       weight_updated = weight - self.lambda_ * weight_grad
+                       updates.append(weight_updated)
                 module.update(updates)
-            return model
+        return model
 
 #TODO : see if time to implement => require to store list of grad in modules and not just grad
 class Minibatch_SGD(Optimizer):
