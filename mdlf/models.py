@@ -147,7 +147,6 @@ class Sequential:
 
         size_ = label.shape
 
-        loss = torch.empty(size_)
         output = torch.empty(size_)
 
         # Handle the case where data is only one sample
@@ -156,10 +155,9 @@ class Sequential:
         
         for i in range(size_[0]):
             output[i] = self.forward(data[i])
-            loss[i]   = self.loss.forward(output[i],label[i])
 
         accuracy = self.metrics(output, label)
-        return output, loss.sum(), accuracy
+        return output, self.loss.forward(output,label), accuracy
 
 
     def compile(self, optimizer, loss, metrics=None):

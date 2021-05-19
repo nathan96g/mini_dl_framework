@@ -22,7 +22,7 @@ class MSE(Loss):
     def forward(self, input, label): 
         self.input = input
         self.label = label
-        loss_mse = ((input - label) ** 2).sum()
+        loss_mse = ((input - label) ** 2).mean()
         return loss_mse
 
     def backward(self, input, label):
