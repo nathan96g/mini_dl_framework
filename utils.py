@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from tensorflow.keras import layers as layers_tf
 from tensorflow.keras import models as models_tf
 
+from tensorflow import keras
+import numpy as np
 # print plot with or with not the predicted values form neural net 
 def plot_circle_with_predicted_labels (data, label, predicted_label=-1, tensorflow = False):
     x_cor, y_cor = data[:,0],data[:,1] 
@@ -69,15 +71,31 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
 
     metrics = tf.keras.metrics.BinaryAccuracy(name="binary_accuracy", dtype=None, threshold=0.0)
     metrics2 = tf.keras.metrics.BinaryAccuracy(name="accuracy")
-
+    
     model_tf.compile(optimizer='SGD',loss='MSE',metrics=[metrics, metrics2])
-
+        
     history = model_tf.fit(train_data.tolist(), 
                            train_labels.tolist(), 
                            epochs=epochs,
                            validation_data=(test_data.tolist(), test_labels.tolist()),
                            batch_size=1)
+    y_hat = model_tf.predict(test_data.tolist())       
+    
+    """
+    for i in range(epochs): 
+        model_tf.compile(optimizer='SGD',loss='MSE',metrics=[metrics, metrics2])
+        
+        history = model_tf.fit(train_data.tolist(), 
+                           train_labels.tolist(), 
+                           epochs=i,
+                           validation_data=(test_data.tolist(), test_labels.tolist()),
+                           batch_size=1)
+        y_hat = model_tf.predict(test_data.tolist())       
+        y_hat_list.append(torch.squeeze(torch.tensor(y_hat)))
+    """
+    return y_hat
 
+    """
     if show_accuracy :
         plt.plot(history.history['accuracy'], label='accuracy')
         plt.plot(history.history['val_accuracy'], label = 'test_accuracy')
@@ -91,21 +109,12 @@ def call_NN_tensorflow(train_data,train_labels,test_data,test_labels,
         predictions = model_tf.predict(test_data.tolist())
         predictions =[1 if i >=0.0 else 0 for i in predictions]
         plot_circle_with_predicted_labels(test_data,test_labels,predictions,tensorflow = True)
-
+    """
 
 
 ################################################
 
 def plot_result(label, predictions_per_epochs):
-
-    #création de epoch_step qui est une liste des epochs qu'on va afficher 
-    length = len(predictions_per_epochs)
-    epoch_step = []
-    step = round(length/5)
-    for i in range(0, length, step):
-        epoch_step.append(i)
-    epoch_step.append(length-1)
-    
     #création des trois columns 
     #list de tous les labels 
     final_label = []
@@ -114,12 +123,28 @@ def plot_result(label, predictions_per_epochs):
     #list du nombre d'epochs 
     final_epochs = []
 
-    # concatenation des résultats des epochs intéréssés avec predictions_per_epochs[i]
-    for i in epoch_step : 
-        final_data= final_data + predictions_per_epochs[i].tolist() 
-        final_label = final_label + label.tolist()
-        #indication de quel epochs on est en train de parler 
-        final_epochs = final_epochs + [i+1] * len(label) 
+    length = len(predictions_per_epochs)
+
+    if length == 1 : 
+        final_data = predictions_per_epochs[0].tolist() 
+        final_label = label.tolist()
+        final_epochs = [10] * len(label) 
+    else : 
+        #création de epoch_step qui est une liste des epochs qu'on va afficher 
+        epoch_step = []
+        step = round(length/5)
+        for i in range(0, length, step):
+            epoch_step.append(i)
+        epoch_step.append(length-1)
+    
+    
+
+         # concatenation des résultats des epochs intéréssés avec predictions_per_epochs[i]
+        for i in epoch_step : 
+            final_data= final_data + predictions_per_epochs[i].tolist() 
+            final_label = final_label + label.tolist()
+            #indication de quel epochs on est en train de parler 
+            final_epochs = final_epochs + [i+1] * len(label) 
     
     
     #création d'un data frame avec trois columns pour etre utiliser par striplot 
