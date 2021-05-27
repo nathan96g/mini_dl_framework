@@ -14,6 +14,10 @@ class Layer(Module):
         raise NotImplementedError('update')
 
 class Identity(Layer):
+    """
+    This layer simply forward the input without
+    any computation.
+    """
 
     def __init__(self, input_dim=-1):
         self.output_dim = input_dim
@@ -28,7 +32,12 @@ class Identity(Layer):
 
     
     def initialize(self, input_dim):
-        #if the first module is an identity layer -> input_dim is size of train_data (2)
+        """
+        Correctly initialize the input and output dimension
+        of this layer. Called when we compile the model.
+        """
+
+        # if the first module is an identity layer -> input_dim is size of train_data (2)
         # Handle automatic dimension initialization
         if input_dim == -1:
             if self.input_dim == -1:
@@ -53,6 +62,11 @@ class Identity(Layer):
 
 
 class Linear(Layer):
+    """
+    A fully connected layer, i.e. each node in the
+    previous layer is connected to each node in this
+    layer.
+    """
 
     def __init__(self, number_nodes, input_dim=-1):
         self.output_dim = number_nodes
@@ -65,19 +79,21 @@ class Linear(Layer):
         self.bias_grad = None
 
 
-    # see if output needed
-    # if we are in layer l:
-    # input : x_{l-1} 
-    # output : z_l
+    
+    
     def forward(self, input):
-        self.input = input
-        return self.weights @ input + self.bias #!!! no .T
+        # if we are in layer l:
+        # input : x_{l-1} 
+        # output : z_l
+        self.input = input # we conserve this for the backward pass
+        return self.weights @ input + self.bias
     
     def backward(self, *grad_wrt_output):
         curr_delta = grad_wrt_output[0] #delta_l
         self.weights_grad = curr_delta.view(-1, 1).mm(self.input.view(1, -1))
-        self.bias_grad = curr_delta     
-        return (self.weights.T @ curr_delta) # delta_{l-1} without componentwise activation mult !!! .T
+        self.bias_grad = curr_delta
+        # delta_{l-1} without componentwise activation mult 
+        return (self.weights.T @ curr_delta)
 
 
     def param(self): 
@@ -94,7 +110,10 @@ class Linear(Layer):
         self.bias_grad[:] = 0.0
     
     def initialize(self, input_dim):
-
+        """
+        Correctly initialize the input and output dimension
+        of this layer. Called when we compile the model.
+        """
         # Handle automatic dimension initialization
         if input_dim == -1:
             if self.input_dim == -1:
@@ -111,8 +130,7 @@ class Linear(Layer):
 
         # Initialize weights and bias :
         uniform_param = 1 / (self.input_dim**(1/2))
-        self.weights = empty(self.input_dim, self.output_dim).uniform_(-uniform_param, uniform_param).T #!!! T
-        
+        self.weights = empty(self.input_dim, self.output_dim).uniform_(-uniform_param, uniform_param).T 
         self.bias = empty(self.output_dim).fill_(0.0)
         self.number_params = self.output_dim * self.input_dim + self.output_dim
         
@@ -124,24 +142,3 @@ class Linear(Layer):
 
     def __str__(self):
         return super().__str__() + ": Linear" 
-
-#TODO
-class Conv1D(Layer):
-
-    def initialize(self, input_dim):
-        raise NotImplementedError
-
-    def forward(self, *input): 
-        raise NotImplementedError
-
-    def backward(self, *gradwrtoutput): 
-        raise NotImplementedError
-
-    def param(self): 
-        raise NotImplementedError('param')
-    
-    def update(self, *new_weights):
-        raise NotImplementedError('update')
-
-    def __str__(self):
-        return super().__str__() + ": Convolution 1D" 

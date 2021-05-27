@@ -14,6 +14,10 @@ class Loss(Module):
 
 
 class MSE(Loss):
+    """
+    Mean Squared error loss module.
+    """
+
 
     def __init__(self):
         self.input = None

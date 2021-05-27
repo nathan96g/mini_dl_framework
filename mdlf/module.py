@@ -1,6 +1,11 @@
 
 class Module(object):
-    def forward(self, *input): 
+    """
+    General module for almost every element
+    of a deep learning model (layers, losses, activations)
+    """
+
+    def forward(self, *input):
         raise NotImplementedError
 
     def backward(self, *gradwrtoutput): 
